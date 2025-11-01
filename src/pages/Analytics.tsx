@@ -7,6 +7,23 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 
+const getQuestionTypeColor = (type: string) => {
+  switch (type) {
+    case 'Ideation':
+      return 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/50';
+    case 'Yes/No':
+      return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/50';
+    case 'Multiple Choice':
+      return 'bg-green-500/20 text-green-700 dark:text-green-300 border-green-500/50';
+    case 'Open-ended':
+      return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/50';
+    case 'Ranking':
+      return 'bg-pink-500/20 text-pink-700 dark:text-pink-300 border-pink-500/50';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+};
+
 const Analytics = () => {
   const navigate = useNavigate();
   const [realQuestions, setRealQuestions] = useState<any[]>([]);
@@ -127,7 +144,7 @@ const Analytics = () => {
                     <div className="flex-1 text-left">
                       <h3 className="text-lg font-semibold mb-2">{realQuestion.question}</h3>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <Badge variant="outline">{realQuestion.type}</Badge>
+                        <Badge className={getQuestionTypeColor(realQuestion.type)}>{realQuestion.type}</Badge>
                         <span className="text-sm text-muted-foreground">
                           {realQuestion.totalResponses} responses
                         </span>
@@ -217,7 +234,7 @@ const Analytics = () => {
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold mb-2">{realQuestion.question}</h3>
                       <div className="flex items-center gap-3 flex-wrap">
-                        <Badge variant="outline">{realQuestion.type}</Badge>
+                        <Badge className={getQuestionTypeColor(realQuestion.type)}>{realQuestion.type}</Badge>
                         <span className="text-sm text-muted-foreground">
                           {realQuestion.totalResponses} responses
                         </span>

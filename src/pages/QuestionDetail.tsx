@@ -9,6 +9,23 @@ import ReactWordcloud from "react-wordcloud";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 
+const getQuestionTypeColor = (type: string) => {
+  switch (type) {
+    case 'Ideation':
+      return 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/50';
+    case 'Yes/No':
+      return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/50';
+    case 'Multiple Choice':
+      return 'bg-green-500/20 text-green-700 dark:text-green-300 border-green-500/50';
+    case 'Open-ended':
+      return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/50';
+    case 'Ranking':
+      return 'bg-pink-500/20 text-pink-700 dark:text-pink-300 border-pink-500/50';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+};
+
 // This would typically come from a shared data file or API
 const questionsData = [
   {
@@ -281,7 +298,7 @@ const QuestionDetail = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-3">{question.question}</h1>
         <div className="flex items-center gap-3 flex-wrap">
-          <Badge variant="outline">{question.type}</Badge>
+          <Badge className={getQuestionTypeColor(question.type)}>{question.type}</Badge>
           <span className="text-sm text-muted-foreground">
             {question.totalResponses} responses
           </span>
