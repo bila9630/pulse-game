@@ -58,6 +58,8 @@ function SortableItem({ option }: { option: RankingOption }) {
       }`}
     >
       <div className="flex items-center gap-3">
+        <span className="text-2xl">{option.emoji}</span>
+        <span className="font-medium text-lg flex-1">{option.name}</span>
         <div
           {...attributes}
           {...listeners}
@@ -65,8 +67,6 @@ function SortableItem({ option }: { option: RankingOption }) {
         >
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </div>
-        <span className="text-2xl">{option.emoji}</span>
-        <span className="font-medium text-lg flex-1">{option.name}</span>
       </div>
     </Card>
   );
