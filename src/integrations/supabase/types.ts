@@ -79,18 +79,21 @@ export type Database = {
           id: string
           keypoint: string
           question_id: string
+          response_count: number
         }
         Insert: {
           created_at?: string
           id?: string
           keypoint: string
           question_id: string
+          response_count?: number
         }
         Update: {
           created_at?: string
           id?: string
           keypoint?: string
           question_id?: string
+          response_count?: number
         }
         Relationships: [
           {

@@ -73,33 +73,49 @@ serve(async (req) => {
         });
       }
 
-      const keypointsWithLikes = existingKeypoints.map((kp) => ({
-        id: kp.id,
-        text: kp.keypoint,
-        value: Math.max(10, (likeCounts[kp.id] || 0) * 5 + 10),
-        likes: likeCounts[kp.id] || 0,
-      }));
+      // Get response_count from database
+      const { data: fullKeypoints } = await supabase
+        .from('response_keypoints')
+        .select('id, keypoint, response_count')
+        .eq('question_id', questionId);
+
+      const keypointsWithLikes = (fullKeypoints || existingKeypoints).map((kp) => {
+        const responseCount = ('response_count' in kp ? kp.response_count : 1) as number;
+        const likeCount = likeCounts[kp.id] || 0;
+        
+        return {
+          id: kp.id,
+          text: kp.keypoint,
+          value: 20 + (responseCount * 15) + (likeCount * 10), // Base + frequency + likes
+          likes: likeCount,
+          count: responseCount,
+        };
+      });
 
       return new Response(JSON.stringify({ keypoints: keypointsWithLikes }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Extract keypoints using AI
+    // Extract keypoints using AI with frequency tracking
     const prompt = `Question: "${question}"
 
 Here are all the responses from users:
 ${responses.map((r, i) => `${i + 1}. ${r.response_text}`).join('\n')}
 
-Extract approximately one keypoint per response (${responses.length} total responses). Each keypoint should be:
-- 1-3 words maximum
-- A distinct, specific concept or theme
-- Not repeated or too similar to other keypoints
-- Readable and meaningful on its own
+Analyze these responses and extract the key themes. Return a JSON object where:
+- Each key is a short theme name (1-3 words)
+- Each value is the count of how many responses mention that theme
 
-Combine similar concepts into single keypoints when appropriate. Return the keypoints as a simple JSON array of strings.
+Group similar concepts together and count them. Make sure every response is represented by at least one theme.
 
-Example format: ["remote work", "health benefits", "flexible hours", "better communication", "time management"]`;
+Example format:
+{
+  "remote flexibility": 3,
+  "health benefits": 2,
+  "better communication": 1,
+  "work-life balance": 4
+}`;
 
     console.log('Calling AI gateway for keypoint extraction');
 
@@ -153,8 +169,8 @@ Example format: ["remote work", "health benefits", "flexible hours", "better com
     const content = aiData.choices?.[0]?.message?.content || '';
     console.log('AI response content:', content);
 
-    // Parse keypoints from AI response
-    let keypoints: string[] = [];
+    // Parse keypoints with frequency from AI response
+    let keypointsWithCount: { [key: string]: number } = {};
     try {
       // Clean up the response - remove markdown code blocks if present
       const cleanedContent = content
@@ -162,29 +178,37 @@ Example format: ["remote work", "health benefits", "flexible hours", "better com
         .replace(/```\n?/g, '')
         .trim();
       
-      keypoints = JSON.parse(cleanedContent);
+      const parsed = JSON.parse(cleanedContent);
       
-      if (!Array.isArray(keypoints)) {
-        console.error('AI response is not an array');
-        keypoints = [];
+      if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+        keypointsWithCount = parsed;
+      } else {
+        console.error('AI response is not an object with counts');
+        keypointsWithCount = {};
       }
     } catch (parseError) {
       console.error('Failed to parse AI response:', parseError);
-      // Fallback: try to extract keypoints from text
+      // Fallback: create simple keypoints with count 1
       const matches = content.match(/"([^"]+)"/g);
       if (matches) {
-        keypoints = matches.map((m: string) => m.replace(/"/g, ''));
+        matches.forEach((m: string) => {
+          const key = m.replace(/"/g, '');
+          keypointsWithCount[key] = 1;
+        });
       }
     }
 
-    console.log(`Extracted ${keypoints.length} keypoints`);
+    console.log(`Extracted ${Object.keys(keypointsWithCount).length} keypoints with frequencies`);
 
     // Save keypoints to database
-    if (keypoints.length > 0) {
-      const keypointRecords = keypoints.slice(0, 20).map(kp => ({
-        question_id: questionId,
-        keypoint: kp,
-      }));
+    if (Object.keys(keypointsWithCount).length > 0) {
+      const keypointRecords = Object.entries(keypointsWithCount)
+        .slice(0, 20)
+        .map(([keypoint, count]) => ({
+          question_id: questionId,
+          keypoint: keypoint,
+          response_count: count,
+        }));
 
       const { data: savedKeypoints, error: saveError } = await supabase
         .from('response_keypoints')
@@ -198,8 +222,9 @@ Example format: ["remote work", "health benefits", "flexible hours", "better com
         const formattedKeypoints = (savedKeypoints || []).map((kp) => ({
           id: kp.id,
           text: kp.keypoint,
-          value: 10,
+          value: 20 + (kp.response_count * 15), // Base 20 + frequency multiplier
           likes: 0,
+          count: kp.response_count,
         }));
 
         return new Response(JSON.stringify({ keypoints: formattedKeypoints }), {

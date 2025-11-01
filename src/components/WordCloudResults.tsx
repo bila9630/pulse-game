@@ -22,6 +22,7 @@ interface Keypoint {
   text: string;
   value: number;
   likes: number;
+  count?: number;
 }
 
 interface WordCloudResultsProps {
@@ -91,7 +92,7 @@ export const WordCloudResults = ({ questionId, question, onClose, onCancel }: Wo
 
       setKeypoints(prev => prev.map(kp => 
         kp.id === keypointId 
-          ? { ...kp, likes: kp.likes - 1, value: Math.max(10, kp.value - 5) }
+          ? { ...kp, likes: kp.likes - 1, value: Math.max(20, kp.value - 10) }
           : kp
       ));
 
@@ -115,7 +116,7 @@ export const WordCloudResults = ({ questionId, question, onClose, onCancel }: Wo
       
       setKeypoints(prev => prev.map(kp => 
         kp.id === keypointId 
-          ? { ...kp, likes: kp.likes + 1, value: kp.value + 5 }
+          ? { ...kp, likes: kp.likes + 1, value: kp.value + 10 }
           : kp
       ));
 
@@ -166,12 +167,13 @@ export const WordCloudResults = ({ questionId, question, onClose, onCancel }: Wo
                   options={{
                     rotations: 2,
                     rotationAngles: [0, 0],
-                    fontSizes: [24, 72],
+                    fontSizes: [20, 80],
                     colors: ["hsl(var(--primary))", "hsl(var(--primary) / 0.8)", "hsl(var(--primary) / 0.6)"],
                     enableTooltip: true,
                     deterministic: true,
-                    padding: 8,
+                    padding: 10,
                     fontFamily: "inherit",
+                    scale: "sqrt",
                   }}
                 />
               </div>
@@ -187,7 +189,14 @@ export const WordCloudResults = ({ questionId, question, onClose, onCancel }: Wo
                         key={keypoint.id}
                         className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border-2 border-transparent hover:border-primary/20 transition-all"
                       >
-                        <span className="font-medium flex-1">{keypoint.text}</span>
+                        <div className="flex-1 flex items-center gap-2">
+                          <span className="font-medium">{keypoint.text}</span>
+                          {keypoint.count && keypoint.count > 1 && (
+                            <Badge variant="outline" className="text-xs">
+                              {keypoint.count}x
+                            </Badge>
+                          )}
+                        </div>
                         <div className="flex items-center gap-2">
                           {keypoint.likes > 0 && (
                             <Badge variant="secondary">{keypoint.likes}</Badge>
