@@ -938,9 +938,10 @@ const Homepage = () => {
   });
 
   return (
-    <>
-      <LeaderboardSidebar />
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="flex gap-6">
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start justify-between mb-4">
@@ -1384,8 +1385,14 @@ const Homepage = () => {
         open={showProposeDialog}
         onOpenChange={setShowProposeDialog}
       />
+      </div>
+
+      {/* Leaderboard Sidebar */}
+      <div className="hidden lg:block w-24 flex-shrink-0">
+        <LeaderboardSidebar />
+      </div>
     </div>
-    </>
+    </div>
   );
 };
 

@@ -108,7 +108,7 @@ export function LeaderboardSidebar() {
 
   return (
     <TooltipProvider>
-      <div className="fixed right-4 top-24 z-30 flex flex-col gap-3">
+      <div className="flex flex-col gap-3 sticky top-24">
         {topUsers.map((user, index) => {
           const isCurrentUser = user.user_id === currentUserId;
           const isTopThree = index < 3;
