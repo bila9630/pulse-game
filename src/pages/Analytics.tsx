@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BarChart3, TrendingUp, ArrowRight } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
@@ -98,6 +98,46 @@ const Analytics = () => {
                   idx === 2 ? "hsl(var(--accent))" : 
                   "hsl(var(--primary))"
           }));
+        } else if (questionData.question_type === 'ranking') {
+          // For ranking questions, calculate average placement
+          const options = (questionData.options as any)?.options || [];
+          
+          if (options.length > 0 && responsesForQuestion.length > 0) {
+            const placementSums: { [key: string]: number } = {};
+            const placementCounts: { [key: string]: number } = {};
+            
+            options.forEach((opt: string) => {
+              placementSums[opt] = 0;
+              placementCounts[opt] = 0;
+            });
+
+            responsesForQuestion.forEach((response) => {
+              try {
+                const rankingData = typeof response.response_text === 'string' 
+                  ? JSON.parse(response.response_text) 
+                  : response.response_text;
+                
+                if (Array.isArray(rankingData)) {
+                  rankingData.forEach((item: string, index: number) => {
+                    if (placementSums.hasOwnProperty(item)) {
+                      placementSums[item] += (index + 1); // 1-indexed placement
+                      placementCounts[item]++;
+                    }
+                  });
+                }
+              } catch (e) {
+                console.error('Error parsing ranking data:', e);
+              }
+            });
+
+            chartData = options.map((opt: string) => ({
+              name: opt,
+              averagePlacement: placementCounts[opt] > 0 
+                ? placementSums[opt] / placementCounts[opt] 
+                : options.length + 1,
+              fill: "hsl(var(--primary))"
+            })).sort((a, b) => a.averagePlacement - b.averagePlacement);
+          }
         }
 
         return {
@@ -128,7 +168,7 @@ const Analytics = () => {
       <Accordion type="single" collapsible className="space-y-4">
         {/* Real Questions from Database */}
         {realQuestions.map((realQuestion, index) => {
-          const isCategory1 = realQuestion.type === "Multiple Choice" || realQuestion.type === "Yes/No";
+          const isCategory1 = realQuestion.type === "Multiple Choice" || realQuestion.type === "Yes/No" || realQuestion.type === "Ranking";
           
           if (isCategory1) {
             // Category 1: Expandable accordion without "More Info" button
@@ -163,53 +203,95 @@ const Analytics = () => {
                       <div>
                         <h4 className="text-lg font-semibold mb-4 flex items-center">
                           <BarChart3 className="mr-2 h-5 w-5 text-primary" />
-                          Response Distribution
+                          {realQuestion.type === "Ranking" ? "Average Placement Rankings" : "Response Distribution"}
                         </h4>
                         <ResponsiveContainer width="100%" height={250}>
-                          <PieChart>
-                            <Pie
-                              data={realQuestion.responses}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                              outerRadius={80}
-                              dataKey="value"
-                            >
-                              {realQuestion.responses.map((entry: any, idx: number) => (
-                                <Cell key={`cell-${idx}`} fill={entry.fill} />
-                              ))}
-                            </Pie>
-                            <Tooltip 
-                              contentStyle={{ 
-                                backgroundColor: "hsl(var(--card))", 
-                                border: "1px solid hsl(var(--border))",
-                                borderRadius: "8px"
-                              }} 
-                            />
-                          </PieChart>
+                          {realQuestion.type === "Ranking" ? (
+                            <BarChart data={realQuestion.responses} layout="horizontal">
+                              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                              <XAxis 
+                                type="number" 
+                                domain={[1, 'auto']}
+                                label={{ value: 'Average Placement (Lower is Better)', position: 'insideBottom', offset: -5 }}
+                              />
+                              <YAxis 
+                                type="category" 
+                                dataKey="name" 
+                                width={120}
+                              />
+                              <Tooltip 
+                                contentStyle={{ 
+                                  backgroundColor: "hsl(var(--card))", 
+                                  border: "1px solid hsl(var(--border))",
+                                  borderRadius: "8px"
+                                }}
+                                formatter={(value: number) => [value.toFixed(2), 'Avg Placement']}
+                              />
+                              <Bar dataKey="averagePlacement" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
+                            </BarChart>
+                          ) : (
+                            <PieChart>
+                              <Pie
+                                data={realQuestion.responses}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                outerRadius={80}
+                                dataKey="value"
+                              >
+                                {realQuestion.responses.map((entry: any, idx: number) => (
+                                  <Cell key={`cell-${idx}`} fill={entry.fill} />
+                                ))}
+                              </Pie>
+                              <Tooltip 
+                                contentStyle={{ 
+                                  backgroundColor: "hsl(var(--card))", 
+                                  border: "1px solid hsl(var(--border))",
+                                  borderRadius: "8px"
+                                }} 
+                              />
+                            </PieChart>
+                          )}
                         </ResponsiveContainer>
                       </div>
                     )}
 
                     {realQuestion.totalResponses > 0 && (
                       <div>
-                        <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
+                        <h4 className="text-lg font-semibold mb-4">
+                          {realQuestion.type === "Ranking" ? "Ranking Summary" : "Response Breakdown"}
+                        </h4>
                         <div className="space-y-3">
                           {realQuestion.responses?.map((response: any, idx: number) => (
                             <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                               <div className="flex items-center gap-3">
-                                <div 
-                                  className="h-3 w-3 rounded-full" 
-                                  style={{ backgroundColor: response.fill }}
-                                />
+                                {realQuestion.type === "Ranking" ? (
+                                  <Badge variant="outline" className="min-w-8 justify-center">
+                                    #{idx + 1}
+                                  </Badge>
+                                ) : (
+                                  <div 
+                                    className="h-3 w-3 rounded-full" 
+                                    style={{ backgroundColor: response.fill }}
+                                  />
+                                )}
                                 <span className="font-medium">{response.name}</span>
                               </div>
                               <div className="text-right">
-                                <span className="font-bold text-lg">{response.value}</span>
-                                <span className="text-muted-foreground text-sm ml-2">
-                                  ({realQuestion.totalResponses > 0 ? ((response.value / realQuestion.totalResponses) * 100).toFixed(1) : 0}%)
-                                </span>
+                                {realQuestion.type === "Ranking" ? (
+                                  <>
+                                    <span className="font-bold text-lg">{response.averagePlacement.toFixed(2)}</span>
+                                    <span className="text-muted-foreground text-sm ml-2">avg position</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="font-bold text-lg">{response.value}</span>
+                                    <span className="text-muted-foreground text-sm ml-2">
+                                      ({realQuestion.totalResponses > 0 ? ((response.value / realQuestion.totalResponses) * 100).toFixed(1) : 0}%)
+                                    </span>
+                                  </>
+                                )}
                               </div>
                             </div>
                           ))}
