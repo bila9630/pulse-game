@@ -51,7 +51,7 @@ export type Database = {
           question_id: string | null
           response_text: string | null
           selected_option: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -59,7 +59,7 @@ export type Database = {
           question_id?: string | null
           response_text?: string | null
           selected_option?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -67,7 +67,7 @@ export type Database = {
           question_id?: string | null
           response_text?: string | null
           selected_option?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
