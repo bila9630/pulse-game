@@ -687,7 +687,7 @@ const QuestionDetail = () => {
         </>
       )}
 
-      {analyzingTrends && question.type === "Open-ended" && (
+      {analyzingTrends && (question.type === "Open-ended" || question.type === "Ideation") && (
         <Card className="p-6 mb-8">
           <div className="flex items-center justify-center gap-3">
             <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
