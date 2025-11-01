@@ -86,8 +86,8 @@ export function AppSidebar() {
             </div>
             {open && (
               <div>
-                <h2 className="font-bold text-lg">FeedbackQuest</h2>
-                <p className="text-xs text-muted-foreground">Level up together</p>
+                <h2 className="font-bold text-lg">vibeVote</h2>
+                <p className="text-xs text-muted-foreground">Vibe Vote Unite</p>
               </div>
             )}
           </div>
