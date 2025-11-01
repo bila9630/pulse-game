@@ -630,7 +630,7 @@ const Homepage = () => {
             )}
             
             {currentQuestion.type === "ideation" && ideationStarted && !ideationComplete && (
-              <div className="space-y-6">
+              <div className="space-y-6 max-h-[75vh] overflow-y-auto">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Clock className="h-6 w-6 text-primary" />
@@ -682,7 +682,7 @@ const Homepage = () => {
                   </p>
                 </div>
                 
-                <div className="max-h-[40vh] overflow-y-auto space-y-2">
+                <div className="max-h-[30vh] overflow-y-auto space-y-2 pr-2">
                   {ideationIdeas.map((idea, idx) => (
                     <div 
                       key={idx} 
