@@ -29,6 +29,40 @@ import {
 
 type QuestionType = "multiple-choice" | "open-ended" | "yes-no" | "ranking" | "ideation";
 
+const getQuestionTypeColor = (type: QuestionType) => {
+  switch (type) {
+    case 'ideation':
+      return 'bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/50';
+    case 'yes-no':
+      return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/50';
+    case 'multiple-choice':
+      return 'bg-green-500/20 text-green-700 dark:text-green-300 border-green-500/50';
+    case 'open-ended':
+      return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/50';
+    case 'ranking':
+      return 'bg-pink-500/20 text-pink-700 dark:text-pink-300 border-pink-500/50';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+};
+
+const getQuestionTypeDisplay = (type: QuestionType) => {
+  switch (type) {
+    case 'ideation':
+      return 'Ideation';
+    case 'yes-no':
+      return 'Yes/No';
+    case 'multiple-choice':
+      return 'Multiple Choice';
+    case 'open-ended':
+      return 'Open-ended';
+    case 'ranking':
+      return 'Ranking';
+    default:
+      return type;
+  }
+};
+
 interface Question {
   id: string;
   type: QuestionType;
@@ -1077,6 +1111,7 @@ const Homepage = () => {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
+                            <Badge className={getQuestionTypeColor(question.type)}>{getQuestionTypeDisplay(question.type)}</Badge>
                             <Badge variant="secondary">{question.category}</Badge>
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" />
@@ -1091,9 +1126,6 @@ const Homepage = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-between pt-4 border-t border-border">
-                        <span className="text-sm text-muted-foreground capitalize">
-                          {question.type.replace("-", " ")} question
-                        </span>
                         <Button size="sm" variant="ghost" className="group">
                           Answer now
                           <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
