@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
+import { BottomNav } from "./BottomNav";
 import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,7 @@ export function Layout({ children }: LayoutProps) {
         <div className="flex-1 flex flex-col w-full">
           {/* Top Header */}
           <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40 flex items-center px-4 gap-4">
-            <SidebarTrigger className="shrink-0" />
+            <SidebarTrigger className="shrink-0 hidden md:block" />
 
             {/* Search Bar */}
             <div className="flex-1 max-w-md hidden sm:block">
@@ -44,9 +45,11 @@ export function Layout({ children }: LayoutProps) {
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto pb-16 md:pb-0">
             {children}
           </main>
+          
+          <BottomNav />
         </div>
       </div>
     </SidebarProvider>

@@ -30,7 +30,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border" side="left">
+    <Sidebar collapsible="icon" className="border-r border-border hidden md:flex" side="left">
       <SidebarContent>
         {/* Brand Header */}
         <div className="p-4 border-b border-border">
