@@ -1,11 +1,36 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BarChart3, TrendingUp, ArrowRight } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { BarChart3, TrendingUp, ArrowRight, PieChartIcon } from "lucide-react";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+
+// Mock data for charts
+const trendingTopicsData = [
+  { name: "Wellbeing", value: 142, fill: "hsl(var(--primary))" },
+  { name: "Productivity", value: 128, fill: "hsl(var(--success))" },
+  { name: "Focus", value: 95, fill: "hsl(var(--accent))" },
+  { name: "Creativity", value: 78, fill: "hsl(var(--warning))" },
+  { name: "Habits", value: 64, fill: "hsl(var(--destructive))" },
+  { name: "Learning", value: 51, fill: "hsl(142 76% 36%)" },
+];
+
+const monthlyActivityData = [
+  { month: "Jan", responses: 145 },
+  { month: "Feb", responses: 178 },
+  { month: "Mar", responses: 210 },
+  { month: "Apr", responses: 198 },
+  { month: "May", responses: 235 },
+  { month: "Jun", responses: 268 },
+  { month: "Jul", responses: 292 },
+  { month: "Aug", responses: 285 },
+  { month: "Sep", responses: 310 },
+  { month: "Oct", responses: 298 },
+  { month: "Nov", responses: 325 },
+  { month: "Dec", responses: 340 },
+];
 
 const getQuestionTypeColor = (type: string) => {
   switch (type) {
@@ -198,6 +223,86 @@ const Analytics = () => {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Question Analytics</h1>
         <p className="text-muted-foreground text-lg">Detailed insights for each feedback question</p>
+      </div>
+
+      {/* Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Pie Chart - Trending Topics */}
+        <Card className="p-6 shadow-md">
+          <div className="flex items-center gap-2 mb-4">
+            <PieChartIcon className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">Trending Topics</h2>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={trendingTopicsData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={90}
+                dataKey="value"
+              >
+                {trendingTopicsData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                }}
+                formatter={(value: number) => [
+                  `${value} responses (${((value / trendingTopicsData.reduce((acc, curr) => acc + curr.value, 0)) * 100).toFixed(1)}%)`,
+                  "Count"
+                ]}
+              />
+              <Legend 
+                verticalAlign="bottom" 
+                height={36}
+                iconType="circle"
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </Card>
+
+        {/* Bar Chart - Monthly User Activity */}
+        <Card className="p-6 shadow-md">
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">Monthly User Activity</h2>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={monthlyActivityData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis 
+                dataKey="month" 
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: '12px' }}
+              />
+              <YAxis 
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: '12px' }}
+                label={{ value: 'Answered Questions', angle: -90, position: 'insideLeft', style: { fill: 'hsl(var(--muted-foreground))' } }}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                }}
+                formatter={(value: number) => [`${value} responses`, "Total"]}
+              />
+              <Bar 
+                dataKey="responses" 
+                fill="hsl(var(--primary))" 
+                radius={[8, 8, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
       </div>
 
       {/* Questions List */}
