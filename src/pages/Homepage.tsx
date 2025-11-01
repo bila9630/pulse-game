@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -80,6 +81,7 @@ interface Question {
 
 const Homepage = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("new");
   const [answeredQuestions, setAnsweredQuestions] = useState<string[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -1043,7 +1045,12 @@ const Homepage = () => {
       {/* Daily Streak and Leaderboard Cards */}
       <div className="grid md:grid-cols-2 gap-6 mb-8">
         <DailyStreakCard isMobile={isMobile} />
-        <RelativeLeaderboard isMobile={isMobile} />
+        <div 
+          onClick={() => navigate('/profile')}
+          className="cursor-pointer transition-all hover:scale-[1.02]"
+        >
+          <RelativeLeaderboard isMobile={isMobile} />
+        </div>
       </div>
 
       {/* Challenge Surface */}
