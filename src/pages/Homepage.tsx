@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Flame, Trophy, Lightbulb, Zap, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { HorseRaceAnimation } from "@/components/HorseRaceAnimation";
 
 type QuestionType = "multiple-choice" | "open-ended" | "yes-no" | "ranking" | "ideation";
 
@@ -118,6 +119,7 @@ const Homepage = () => {
   const [lastIdeaTime, setLastIdeaTime] = useState<number>(Date.now());
   const [showCoolingWarning, setShowCoolingWarning] = useState(false);
   const [ideationComplete, setIdeationComplete] = useState(false);
+  const [horseSpeed, setHorseSpeed] = useState(0);
 
   const handleStartQuestion = (question: Question) => {
     setCurrentQuestion(question);
@@ -224,6 +226,7 @@ const Homepage = () => {
     setLastIdeaTime(Date.now());
     setShowCoolingWarning(false);
     setIdeationComplete(false);
+    setHorseSpeed(5);
     setTimeout(() => ideationInputRef.current?.focus(), 100);
   };
   
@@ -267,6 +270,9 @@ const Homepage = () => {
     setIdeationInput("");
     setLastIdeaTime(now);
     setShowCoolingWarning(false);
+    
+    // Speed up horse
+    setHorseSpeed(Math.min(10, 5 + ideationCombo));
     
     playPopSound();
     
@@ -329,6 +335,13 @@ const Homepage = () => {
     const idleCheck = setInterval(() => {
       const timeSinceLastIdea = (Date.now() - lastIdeaTime) / 1000;
       setShowCoolingWarning(timeSinceLastIdea > 5);
+      
+      // Slow down horse based on idle time
+      if (timeSinceLastIdea > 10) {
+        setHorseSpeed(0);
+      } else if (timeSinceLastIdea > 5) {
+        setHorseSpeed(Math.max(1, Math.floor(5 - timeSinceLastIdea / 2)));
+      }
     }, 1000);
     
     return () => clearInterval(idleCheck);
@@ -631,6 +644,8 @@ const Homepage = () => {
                     )}
                   </div>
                 </div>
+                
+                <HorseRaceAnimation isActive={ideationStarted} speed={horseSpeed} />
                 
                 <Progress value={(ideationTimeLeft / 60) * 100} className="h-2" />
                 
