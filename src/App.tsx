@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import Homepage from "./pages/Homepage";
 import Analytics from "./pages/Analytics";
+import QuestionDetail from "./pages/QuestionDetail";
 import Rewards from "./pages/Rewards";
 import Trees from "./pages/Trees";
 import Profile from "./pages/Profile";
@@ -23,6 +24,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/analytics/:id" element={<QuestionDetail />} />
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/trees" element={<Trees />} />
             <Route path="/profile" element={<Profile />} />
