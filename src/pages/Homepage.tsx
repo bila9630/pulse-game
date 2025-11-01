@@ -1118,23 +1118,37 @@ const Homepage = () => {
                 ))}
               </div>
 
-              <Button 
-                className="w-full" 
-                onClick={() => {
-                  setShowVoteDistribution(false);
-                  const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
-                  setAnsweredQuestions(newAnsweredQuestions);
-                  setOpenAnswer("");
-                  
-                  const nextQuestion = availableQuestions.find(
-                    (q) => !newAnsweredQuestions.includes(q.id)
-                  );
-                  
-                  setCurrentQuestion(nextQuestion || null);
-                }}
-              >
-                Continue
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline"
+                  className="flex-1" 
+                  onClick={() => {
+                    setShowVoteDistribution(false);
+                    const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+                    setAnsweredQuestions(newAnsweredQuestions);
+                    setCurrentQuestion(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="flex-1" 
+                  onClick={() => {
+                    setShowVoteDistribution(false);
+                    const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+                    setAnsweredQuestions(newAnsweredQuestions);
+                    setOpenAnswer("");
+                    
+                    const nextQuestion = availableQuestions.find(
+                      (q) => !newAnsweredQuestions.includes(q.id)
+                    );
+                    
+                    setCurrentQuestion(nextQuestion || null);
+                  }}
+                >
+                  Continue to Next Question
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
