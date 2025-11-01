@@ -1,28 +1,74 @@
 import { Card } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Users, MessageSquare, Calendar } from "lucide-react";
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { BarChart3, MessageSquare, ThumbsUp, ThumbsDown, TrendingUp } from "lucide-react";
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-const workLifeBalanceData = [
-  { name: "Excellent", value: 45, fill: "hsl(var(--success))" },
-  { name: "Good", value: 30, fill: "hsl(var(--primary))" },
-  { name: "Fair", value: 18, fill: "hsl(var(--accent))" },
-  { name: "Needs Improvement", value: 7, fill: "hsl(var(--destructive))" },
-];
-
-const participationData = [
-  { month: "Jan", responses: 120 },
-  { month: "Feb", responses: 145 },
-  { month: "Mar", responses: 180 },
-  { month: "Apr", responses: 210 },
-  { month: "May", responses: 250 },
-  { month: "Jun", responses: 290 },
-];
-
-const sentimentData = [
-  { category: "Team Support", positive: 85, negative: 15 },
-  { category: "Work Environment", positive: 78, negative: 22 },
-  { category: "Career Growth", positive: 72, negative: 28 },
-  { category: "Communication", positive: 88, negative: 12 },
+const questionsData = [
+  {
+    id: 1,
+    question: "How satisfied are you with your current work-life balance?",
+    type: "Multiple Choice",
+    totalResponses: 324,
+    responseRate: 89,
+    responses: [
+      { name: "Very Satisfied", value: 142, fill: "hsl(var(--success))" },
+      { name: "Satisfied", value: 98, fill: "hsl(var(--primary))" },
+      { name: "Neutral", value: 56, fill: "hsl(var(--accent))" },
+      { name: "Dissatisfied", value: 28, fill: "hsl(var(--destructive))" },
+    ],
+  },
+  {
+    id: 2,
+    question: "Do you feel supported by your team lead?",
+    type: "Yes/No",
+    totalResponses: 356,
+    responseRate: 98,
+    responses: [
+      { name: "Yes", value: 312, fill: "hsl(var(--success))" },
+      { name: "No", value: 44, fill: "hsl(var(--destructive))" },
+    ],
+  },
+  {
+    id: 3,
+    question: "What improvements would you suggest for our remote work policy?",
+    type: "Open-ended",
+    totalResponses: 287,
+    responseRate: 79,
+    sentiment: {
+      positive: 198,
+      neutral: 67,
+      negative: 22,
+    },
+    recentFeedback: [
+      { text: "More flexibility with working hours would be great!", sentiment: "positive", time: "2h ago" },
+      { text: "Better communication tools needed for remote collaboration.", sentiment: "neutral", time: "5h ago" },
+      { text: "The current policy is working well for me.", sentiment: "positive", time: "1d ago" },
+    ],
+  },
+  {
+    id: 4,
+    question: "Rate your satisfaction with career development opportunities",
+    type: "Multiple Choice",
+    totalResponses: 298,
+    responseRate: 82,
+    responses: [
+      { name: "Excellent", value: 89, fill: "hsl(var(--success))" },
+      { name: "Good", value: 125, fill: "hsl(var(--primary))" },
+      { name: "Average", value: 58, fill: "hsl(var(--accent))" },
+      { name: "Poor", value: 26, fill: "hsl(var(--destructive))" },
+    ],
+  },
+  {
+    id: 5,
+    question: "Are you satisfied with the company's communication channels?",
+    type: "Yes/No",
+    totalResponses: 341,
+    responseRate: 94,
+    responses: [
+      { name: "Yes", value: 289, fill: "hsl(var(--success))" },
+      { name: "No", value: 52, fill: "hsl(var(--destructive))" },
+    ],
+  },
 ];
 
 const Analytics = () => {
@@ -30,179 +76,167 @@ const Analytics = () => {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
-        <p className="text-muted-foreground text-lg">Insights from your team's feedback</p>
+        <h1 className="text-4xl font-bold mb-2">Question Analytics</h1>
+        <p className="text-muted-foreground text-lg">Detailed insights for each feedback question</p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid md:grid-cols-4 gap-6 mb-8">
-        <Card className="p-6 shadow-lg border-l-4 border-l-primary animate-fade-in">
-          <div className="flex items-center justify-between mb-4">
-            <Users className="h-8 w-8 text-primary" />
-            <span className="text-sm font-medium text-muted-foreground">Participants</span>
-          </div>
-          <p className="text-3xl font-bold mb-1">1,284</p>
-          <p className="text-sm text-success flex items-center">
-            <TrendingUp className="h-4 w-4 mr-1" />
-            +12% from last month
-          </p>
-        </Card>
-
-        <Card className="p-6 shadow-lg border-l-4 border-l-secondary animate-fade-in" style={{ animationDelay: "0.1s" }}>
-          <div className="flex items-center justify-between mb-4">
-            <MessageSquare className="h-8 w-8 text-secondary" />
-            <span className="text-sm font-medium text-muted-foreground">Responses</span>
-          </div>
-          <p className="text-3xl font-bold mb-1">5,147</p>
-          <p className="text-sm text-success flex items-center">
-            <TrendingUp className="h-4 w-4 mr-1" />
-            +18% from last month
-          </p>
-        </Card>
-
-        <Card className="p-6 shadow-lg border-l-4 border-l-accent animate-fade-in" style={{ animationDelay: "0.2s" }}>
-          <div className="flex items-center justify-between mb-4">
-            <BarChart3 className="h-8 w-8 text-accent" />
-            <span className="text-sm font-medium text-muted-foreground">Avg Rating</span>
-          </div>
-          <p className="text-3xl font-bold mb-1">4.2/5</p>
-          <p className="text-sm text-success flex items-center">
-            <TrendingUp className="h-4 w-4 mr-1" />
-            +0.3 from last month
-          </p>
-        </Card>
-
-        <Card className="p-6 shadow-lg border-l-4 border-l-success animate-fade-in" style={{ animationDelay: "0.3s" }}>
-          <div className="flex items-center justify-between mb-4">
-            <Calendar className="h-8 w-8 text-success" />
-            <span className="text-sm font-medium text-muted-foreground">Active Days</span>
-          </div>
-          <p className="text-3xl font-bold mb-1">28/30</p>
-          <p className="text-sm text-success flex items-center">
-            93% engagement
-          </p>
-        </Card>
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Participation Trend */}
-        <Card className="p-6 shadow-lg animate-scale-in">
-            <h3 className="text-xl font-bold mb-6 flex items-center">
-              <TrendingUp className="mr-2 h-5 w-5 text-primary" />
-              Participation Trend
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={participationData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--card))", 
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }} 
-                />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="responses" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={3}
-                  dot={{ fill: "hsl(var(--primary))", r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-        </Card>
-
-        {/* Work-Life Balance Distribution */}
-        <Card className="p-6 shadow-lg animate-scale-in" style={{ animationDelay: "0.1s" }}>
-            <h3 className="text-xl font-bold mb-6 flex items-center">
-              <BarChart3 className="mr-2 h-5 w-5 text-secondary" />
-              Work-Life Balance
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={workLifeBalanceData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  dataKey="value"
-                >
-                  {workLifeBalanceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--card))", 
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
-        </Card>
-
-        {/* Sentiment Analysis */}
-        <Card className="p-6 shadow-lg lg:col-span-2 animate-scale-in" style={{ animationDelay: "0.2s" }}>
-            <h3 className="text-xl font-bold mb-6 flex items-center">
-              <MessageSquare className="mr-2 h-5 w-5 text-accent" />
-              Sentiment by Category
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={sentimentData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="category" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: "hsl(var(--card))", 
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px"
-                  }} 
-                />
-                <Legend />
-                <Bar dataKey="positive" fill="hsl(var(--success))" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="negative" fill="hsl(var(--destructive))" radius={[8, 8, 0, 0]} />
-              </BarChart>
-          </ResponsiveContainer>
-        </Card>
-      </div>
-
-      {/* Recent Feedback */}
-      <Card className="p-6 shadow-lg mt-8 animate-fade-in">
-        <h3 className="text-xl font-bold mb-6">Recent Open Feedback</h3>
-        <div className="space-y-4">
-          {[
-            { text: "Love the new team collaboration tools!", sentiment: "positive", time: "2 hours ago" },
-            { text: "Would appreciate more flexible working hours.", sentiment: "neutral", time: "5 hours ago" },
-            { text: "The onboarding process was excellent!", sentiment: "positive", time: "1 day ago" },
-            { text: "Communication between departments could be improved.", sentiment: "neutral", time: "2 days ago" },
-          ].map((feedback, index) => (
-            <div
-              key={index}
-              className="p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
-            >
-              <p className="mb-2">{feedback.text}</p>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  feedback.sentiment === "positive" 
-                    ? "bg-success/10 text-success" 
-                    : "bg-accent/10 text-accent"
-                }`}>
-                  {feedback.sentiment}
-                </span>
-                <span>{feedback.time}</span>
+      {/* Questions List */}
+      <div className="space-y-8">
+        {questionsData.map((question, index) => (
+          <Card key={question.id} className="p-6 shadow-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+            {/* Question Header */}
+            <div className="mb-6">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-2">{question.question}</h3>
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline">{question.type}</Badge>
+                    <span className="text-sm text-muted-foreground">
+                      {question.totalResponses} responses
+                    </span>
+                    <span className="text-sm text-success flex items-center">
+                      <TrendingUp className="h-4 w-4 mr-1" />
+                      {question.responseRate}% response rate
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </Card>
+
+            {/* Analytics Content */}
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Chart Section */}
+              {(question.type === "Multiple Choice" || question.type === "Yes/No") && (
+                <div>
+                  <h4 className="text-lg font-semibold mb-4 flex items-center">
+                    <BarChart3 className="mr-2 h-5 w-5 text-primary" />
+                    Response Distribution
+                  </h4>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={question.responses}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        dataKey="value"
+                      >
+                        {question.responses.map((entry, idx) => (
+                          <Cell key={`cell-${idx}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: "hsl(var(--card))", 
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "8px"
+                        }} 
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {/* Stats/Details Section */}
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
+                <div className="space-y-3">
+                  {question.responses?.map((response, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="h-3 w-3 rounded-full" 
+                          style={{ backgroundColor: response.fill }}
+                        />
+                        <span className="font-medium">{response.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-lg">{response.value}</span>
+                        <span className="text-muted-foreground text-sm ml-2">
+                          ({((response.value / question.totalResponses) * 100).toFixed(1)}%)
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sentiment Analysis for Open-ended */}
+              {question.type === "Open-ended" && question.sentiment && (
+                <>
+                  <div>
+                    <h4 className="text-lg font-semibold mb-4 flex items-center">
+                      <MessageSquare className="mr-2 h-5 w-5 text-primary" />
+                      Sentiment Analysis
+                    </h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={[
+                        { name: "Positive", value: question.sentiment.positive, fill: "hsl(var(--success))" },
+                        { name: "Neutral", value: question.sentiment.neutral, fill: "hsl(var(--accent))" },
+                        { name: "Negative", value: question.sentiment.negative, fill: "hsl(var(--destructive))" },
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
+                        <YAxis stroke="hsl(var(--muted-foreground))" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "hsl(var(--card))", 
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px"
+                          }} 
+                        />
+                        <Bar dataKey="value" fill="fill" radius={[8, 8, 0, 0]}>
+                          {[
+                            { fill: "hsl(var(--success))" },
+                            { fill: "hsl(var(--accent))" },
+                            { fill: "hsl(var(--destructive))" },
+                          ].map((entry, idx) => (
+                            <Cell key={`cell-${idx}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg font-semibold mb-4">Recent Feedback</h4>
+                    <div className="space-y-3">
+                      {question.recentFeedback?.map((feedback, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
+                        >
+                          <p className="mb-2 text-sm">{feedback.text}</p>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <Badge 
+                              variant={feedback.sentiment === "positive" ? "default" : "outline"}
+                              className={
+                                feedback.sentiment === "positive" 
+                                  ? "bg-success/10 text-success hover:bg-success/20" 
+                                  : "bg-accent/10 text-accent"
+                              }
+                            >
+                              {feedback.sentiment === "positive" ? (
+                                <ThumbsUp className="h-3 w-3 mr-1" />
+                              ) : (
+                                <ThumbsDown className="h-3 w-3 mr-1" />
+                              )}
+                              {feedback.sentiment}
+                            </Badge>
+                            <span>{feedback.time}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
