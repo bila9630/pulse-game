@@ -33,7 +33,7 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Right Actions */}
             <div className="ml-auto flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
+              <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-accent rounded-full" />
               </Button>
