@@ -20,7 +20,14 @@ const navItems = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, setOpenMobile, isMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    // Close sidebar on mobile when navigation item is clicked
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-border">
@@ -50,6 +57,7 @@ export function AppSidebar() {
                     <NavLink
                       to={item.url}
                       end
+                      onClick={handleNavClick}
                       className={({ isActive }) =>
                         isActive
                           ? "bg-primary/10 text-primary font-medium"
