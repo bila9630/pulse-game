@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import Homepage from "./pages/Homepage";
 import Analytics from "./pages/Analytics";
 import Rewards from "./pages/Rewards";
+import Trees from "./pages/Trees";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Homepage />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/rewards" element={<Rewards />} />
+            <Route path="/trees" element={<Trees />} />
             <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

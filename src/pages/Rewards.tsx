@@ -1,8 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Gift, Crown, Coffee, Shirt, Headphones, Ticket, Lock } from "lucide-react";
+import { Gift, Crown, Coffee, Shirt, Headphones, Ticket, Lock, TreePine, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Reward {
   id: number;
@@ -69,10 +70,21 @@ const rewards: Reward[] = [
     description: "Exclusive curated gift collection",
     category: "Special",
   },
+  {
+    id: 7,
+    name: "Plant a Tree",
+    cost: 150,
+    icon: TreePine,
+    available: true,
+    description: "Plant a real tree and help the environment",
+    category: "Impact",
+  },
 ];
 
 const Rewards = () => {
   const userXP = 850;
+  const navigate = useNavigate();
+  const totalTreesPlanted = 127;
 
   const handleRedeem = (reward: Reward) => {
     if (!reward.available) {
@@ -112,6 +124,26 @@ const Rewards = () => {
           <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg animate-glow">
             <Gift className="h-8 w-8 text-primary-foreground" />
           </div>
+        </div>
+      </Card>
+
+      {/* Tree Impact Card */}
+      <Card 
+        className="p-6 mb-8 bg-gradient-to-br from-green-500/10 via-emerald-500/10 to-teal-500/10 border-2 border-green-500/20 shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all"
+        onClick={() => navigate('/trees')}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <TreePine className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <p className="text-sm font-semibold text-green-600 dark:text-green-400">Environmental Impact</p>
+            </div>
+            <p className="text-3xl font-bold mb-1">{totalTreesPlanted} Trees Planted</p>
+            <p className="text-sm text-muted-foreground">By our community members</p>
+          </div>
+          <Button variant="ghost" size="icon" className="flex-shrink-0">
+            <ArrowRight className="h-5 w-5" />
+          </Button>
         </div>
       </Card>
 
