@@ -280,19 +280,17 @@ const Analytics = () => {
                     </div>
                   </div>
                 )}
+              </div>
 
-                {/* Placeholder for other question types */}
-                {realQuestion.type !== "Multiple Choice" && realQuestion.type !== "Yes/No" && (
-                  <div className="col-span-2">
-                    <div className="text-center py-8 text-muted-foreground">
-                      <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                      <p className="text-lg">Detailed analytics for {realQuestion.type} questions</p>
-                      <p className="text-sm mt-2">
-                        {realQuestion.totalResponses} responses collected • Click to view individual responses
-                      </p>
-                    </div>
-                  </div>
-                )}
+              {/* More Info Button */}
+              <div className="mt-6 pt-6 border-t">
+                <Button 
+                  onClick={() => navigate(`/analytics/${realQuestion.id}`)}
+                  className="w-full"
+                >
+                  More Info
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -444,65 +442,17 @@ const Analytics = () => {
                   </>
                 )}
 
-                {/* Open-ended Results */}
-                {question.type === "Open-ended" && question.sentiment && (
-                  <>
-                    <div>
-                      <h4 className="text-lg font-semibold mb-4 flex items-center">
-                        <MessageSquare className="mr-2 h-5 w-5 text-primary" />
-                        Sentiment Analysis
-                      </h4>
-                      <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                          <Pie
-                            data={[
-                              { name: "Positive", value: question.sentiment.positive, fill: "hsl(var(--success))" },
-                              { name: "Neutral", value: question.sentiment.neutral, fill: "hsl(var(--accent))" },
-                              { name: "Negative", value: question.sentiment.negative, fill: "hsl(var(--destructive))" }
-                            ]}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            dataKey="value"
-                          >
-                            <Cell fill="hsl(var(--success))" />
-                            <Cell fill="hsl(var(--accent))" />
-                            <Cell fill="hsl(var(--destructive))" />
-                          </Pie>
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: "hsl(var(--card))", 
-                              border: "1px solid hsl(var(--border))",
-                              borderRadius: "8px"
-                            }} 
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
+              </div>
 
-                    <div>
-                      <h4 className="text-lg font-semibold mb-4">Recent Feedback</h4>
-                      <div className="space-y-3">
-                        {question.recentFeedback?.map((feedback, idx) => (
-                          <div key={idx} className="p-3 bg-muted/50 rounded-lg">
-                            <div className="flex items-start justify-between mb-2">
-                              <Badge 
-                                variant={feedback.sentiment === "positive" ? "default" : feedback.sentiment === "negative" ? "destructive" : "secondary"}
-                                className="text-xs"
-                              >
-                                {feedback.sentiment}
-                              </Badge>
-                              <span className="text-xs text-muted-foreground">{feedback.time}</span>
-                            </div>
-                            <p className="text-sm">{feedback.text}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
+              {/* More Info Button */}
+              <div className="mt-6 pt-6 border-t">
+                <Button 
+                  onClick={() => navigate(`/analytics/${question.id}`)}
+                  className="w-full"
+                >
+                  More Info
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
