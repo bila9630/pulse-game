@@ -72,6 +72,26 @@ const Profile = () => {
     };
 
     fetchLeaderboard();
+    
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('profile-leaderboard-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_progress'
+        },
+        () => {
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userProgress]);
 
   const unlockedRewards = getUnlockedRewards(userProgress.level);

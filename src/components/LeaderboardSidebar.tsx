@@ -1,26 +1,49 @@
 import { useState, useEffect } from "react";
-import { Trophy, Medal, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar } from "@/components/ui/avatar";
+import { getLevelFromXP, getCurrentLevelXP } from "@/lib/xpSystem";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface LeaderboardUser {
+  id: string;
   user_id: string;
   username: string;
   total_xp: number;
   level: number;
+  current_xp: number;
 }
 
 export function LeaderboardSidebar() {
   const [topUsers, setTopUsers] = useState<LeaderboardUser[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     fetchLeaderboard();
     
     // Refresh every 30 seconds
     const interval = setInterval(fetchLeaderboard, 30000);
-    return () => clearInterval(interval);
+    
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('leaderboard-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'user_progress'
+        },
+        () => {
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchLeaderboard = async () => {
@@ -29,30 +52,35 @@ export function LeaderboardSidebar() {
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUserId(user?.id || null);
 
-      // Fetch top 10 users
+      // Fetch top 10 users (matching Profile page logic)
       const { data, error } = await supabase
         .from('user_progress')
-        .select('user_id, username, total_xp, level')
+        .select('*')
         .order('total_xp', { ascending: false })
         .limit(10);
 
       if (error) throw error;
-      if (data) setTopUsers(data);
+      
+      if (data) {
+        // Normalize levels based on total XP (matching Profile page)
+        const normalized = data.map(user => ({
+          ...user,
+          level: getLevelFromXP(user.total_xp),
+          current_xp: getCurrentLevelXP(user.total_xp),
+        }));
+        
+        // Sort by level first, then by total_xp (matching Profile page)
+        const sorted = normalized.sort((a, b) => {
+          if (b.level !== a.level) {
+            return b.level - a.level;
+          }
+          return b.total_xp - a.total_xp;
+        });
+        
+        setTopUsers(sorted);
+      }
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
-    }
-  };
-
-  const getRankIcon = (index: number) => {
-    switch (index) {
-      case 0:
-        return <Crown className="h-4 w-4 text-yellow-400" />;
-      case 1:
-        return <Medal className="h-4 w-4 text-gray-300" />;
-      case 2:
-        return <Medal className="h-4 w-4 text-amber-600" />;
-      default:
-        return <Trophy className="h-3 w-3 text-muted-foreground" />;
     }
   };
 
@@ -65,76 +93,66 @@ export function LeaderboardSidebar() {
       .slice(0, 2);
   };
 
-  return (
-    <div
-      className="fixed left-0 top-20 z-30 transition-all duration-300 ease-in-out"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        width: isHovered ? '240px' : '48px',
-      }}
-    >
-      <div className="bg-card/80 backdrop-blur-sm border-r border-border h-[calc(100vh-5rem)] shadow-lg overflow-hidden">
-        <div className="p-2 space-y-1">
-          {topUsers.map((user, index) => {
-            const isCurrentUser = user.user_id === currentUserId;
-            
-            return (
-              <div
-                key={user.user_id}
-                className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
-                  isCurrentUser 
-                    ? 'bg-primary/10 border border-primary/20' 
-                    : 'hover:bg-muted/50'
-                }`}
-              >
-                {/* Rank indicator - always visible */}
-                <div className="flex items-center justify-center w-6 shrink-0">
-                  {getRankIcon(index)}
-                </div>
+  const getCrownColor = (index: number) => {
+    switch (index) {
+      case 0:
+        return "text-yellow-400";
+      case 1:
+        return "text-gray-300";
+      case 2:
+        return "text-amber-600";
+      default:
+        return "";
+    }
+  };
 
-                {/* Expandable content */}
-                <div
-                  className="flex items-center gap-2 transition-opacity duration-300 whitespace-nowrap overflow-hidden"
-                  style={{
-                    opacity: isHovered ? 1 : 0,
-                    width: isHovered ? 'auto' : 0,
-                  }}
-                >
-                  <Avatar className="h-6 w-6 shrink-0">
-                    <div className="h-full w-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-[10px] font-semibold text-primary-foreground">
+  return (
+    <TooltipProvider>
+      <div className="fixed right-4 top-24 z-30 flex flex-col gap-3">
+        {topUsers.map((user, index) => {
+          const isCurrentUser = user.user_id === currentUserId;
+          const isTopThree = index < 3;
+          
+          return (
+            <Tooltip key={user.user_id}>
+              <TooltipTrigger asChild>
+                <div className="relative">
+                  <Avatar className={`h-12 w-12 cursor-pointer transition-transform hover:scale-110 ${
+                    isCurrentUser 
+                      ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' 
+                      : ''
+                  }`}>
+                    <div className={`h-full w-full flex items-center justify-center text-sm font-semibold ${
+                      isTopThree
+                        ? 'bg-gradient-to-br from-primary to-secondary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
                       {getInitials(user.username)}
                     </div>
                   </Avatar>
-
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-xs font-medium truncate ${
-                      isCurrentUser ? 'text-primary' : 'text-foreground'
-                    }`}>
-                      {user.username}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Lv.{user.level} • {user.total_xp.toLocaleString()} XP
-                    </p>
-                  </div>
+                  
+                  {isTopThree && (
+                    <div className="absolute -top-1 -right-1">
+                      <Crown className={`h-5 w-5 ${getCrownColor(index)} drop-shadow-lg`} />
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Hint text at bottom */}
-        <div
-          className="absolute bottom-4 left-0 right-0 text-center transition-opacity duration-300"
-          style={{
-            opacity: isHovered ? 0 : 1,
-          }}
-        >
-          <p className="text-[10px] text-muted-foreground px-2">
-            Hover to expand
-          </p>
-        </div>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="font-medium">
+                <div className="text-sm">
+                  <p className="font-semibold">{user.username}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Level {user.level} • {user.total_xp.toLocaleString()} XP
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Rank #{index + 1}
+                  </p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
