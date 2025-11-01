@@ -1,4 +1,4 @@
-# Pulse Game 🎮
+# vibeVote 🎮
 
 A gamified employee feedback platform that transforms organizational feedback into an engaging experience through game mechanics, AI-powered insights, and competitive elements.
 
@@ -16,6 +16,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 ## ✨ Key Features
 
 ### 🎯 Gamification System
+
 - **XP & Leveling**: Earn experience points for each response, with progressive leveling that unlocks rewards
 - **Daily Streaks**: Maintain consecutive days of participation with visual streak tracking
 - **Leaderboards**: Compete with peers through relative rankings and global standings
@@ -23,6 +24,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Horse Race Animation**: Dynamic visual feedback celebrating engagement
 
 ### 💬 Multi-Format Questions
+
 - **Multiple Choice**: Quick polls with vote distribution visualization
 - **Open-Ended**: Free-form text responses with AI-powered sentiment analysis
 - **Ranking**: Drag-and-drop prioritization with animated result comparisons
@@ -30,6 +32,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Ideation**: Creative brainstorming with word cloud visualizations
 
 ### 🤖 AI-Powered Insights
+
 - **Response Evaluation**: Automated assessment of open-ended answers
 - **Sentiment Analysis**: Understanding emotional context in feedback
 - **Trend Detection**: Identifying patterns across responses
@@ -37,6 +40,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Audio Transcription**: Voice-to-text for spoken responses
 
 ### 📊 Analytics & Visualization
+
 - **Question Analytics**: Track participation rates, response patterns, and engagement
 - **Word Clouds**: Visual representation of collective thoughts
 - **Vote Distribution**: Real-time polling results with animated charts
@@ -44,12 +48,14 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Trend Reports**: Historical data and pattern identification
 
 ### 🎁 Rewards & Achievements
+
 - Progressive reward system tied to user levels
 - Unlockable features and capabilities
 - Achievement badges and milestones
 - Visual celebration of accomplishments
 
 ### 🎨 User Experience
+
 - **Play Mode**: Immersive full-screen question experience
 - **List View**: Browse and filter available questions
 - **Undo Functionality**: Revise recent responses within time limits
@@ -58,6 +64,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Dark Mode**: Comfortable viewing in any lighting condition
 
 ### 👥 Social Features
+
 - Propose new questions to the organization
 - View relative positioning on leaderboards
 - Track personal progress and statistics
@@ -66,6 +73,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 ## 🛠️ Technology Stack
 
 ### Frontend
+
 - **React 18** - Modern UI library with hooks
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool and dev server
@@ -80,6 +88,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **DND Kit** - Drag-and-drop functionality
 
 ### Backend (Lovable Cloud)
+
 - **Supabase** - PostgreSQL database
 - **Row Level Security** - Data access policies
 - **Edge Functions** - Serverless compute
@@ -87,6 +96,7 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - **Authentication** - User management
 
 ### AI Integration
+
 - **Lovable AI** - Built-in AI capabilities
 - Sentiment analysis and evaluation
 - Trend detection and insights
@@ -129,36 +139,40 @@ pulse-game/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - Git
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <YOUR_GIT_URL>
    cd pulse-game
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Environment Setup**
-   
+
    The project uses Lovable Cloud, which automatically configures Supabase connection. Environment variables are pre-configured in `.env`:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_PUBLISHABLE_KEY`
    - `VITE_SUPABASE_PROJECT_ID`
 
 4. **Start development server**
+
    ```bash
    npm run dev
    ```
 
 5. **Open your browser**
-   
+
    Navigate to `http://localhost:5173`
 
 ### Available Scripts
@@ -173,6 +187,7 @@ npm run lint         # Run ESLint
 ## 📊 Database Schema
 
 ### Core Tables
+
 - **questions** - Question content and metadata
 - **responses** - User answers and engagement
 - **user_progress** - XP, levels, and achievements
@@ -180,6 +195,7 @@ npm run lint         # Run ESLint
 - **proposed_questions** - Community suggestions
 
 ### Edge Functions
+
 - **analyze-trends** - Pattern detection across responses
 - **evaluate-response** - AI-powered answer assessment
 - **extract-keypoints** - Theme identification
@@ -188,6 +204,7 @@ npm run lint         # Run ESLint
 ## 🎨 Design System
 
 The project uses a comprehensive design system built on:
+
 - Semantic color tokens defined in `index.css`
 - Customized shadcn/ui components
 - Responsive breakpoints for mobile/desktop
@@ -210,11 +227,13 @@ The project uses a comprehensive design system built on:
 ## 🚢 Deployment
 
 ### Via Lovable
+
 1. Click the **Publish** button in the Lovable editor
 2. Your app is instantly deployed with a staging URL
 3. Connect a custom domain in Project Settings
 
 ### Via GitHub
+
 1. Connect your GitHub account in Lovable
 2. Push changes sync automatically
 3. Deploy to your preferred hosting platform (Vercel, Netlify, etc.)
@@ -222,12 +241,14 @@ The project uses a comprehensive design system built on:
 ## 🤝 Contributing
 
 This project is built with [Lovable](https://lovable.dev), which provides:
+
 - Real-time preview of changes
 - AI-assisted development
 - Automatic deployment
 - Version history and rollback
 
 To contribute:
+
 1. Make changes in Lovable or via Git
 2. Test thoroughly in preview mode
 3. Commit with descriptive messages
@@ -254,6 +275,7 @@ This project was created with Lovable and follows standard web application licen
 ## 🙏 Acknowledgments
 
 Built with ❤️ using:
+
 - [Lovable](https://lovable.dev) - AI-powered development platform
 - [Supabase](https://supabase.com) - Backend infrastructure
 - [shadcn/ui](https://ui.shadcn.com) - Component library
@@ -261,4 +283,4 @@ Built with ❤️ using:
 
 ---
 
-**Ready to transform your feedback process?** Get started with Pulse Game today! 🚀
+**Ready to transform your feedback process?** Get started with vibeVote today! 🚀
