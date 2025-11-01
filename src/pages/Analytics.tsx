@@ -58,7 +58,7 @@ const Analytics = () => {
         );
 
         const totalResponses = responsesForQuestion.length;
-        const responseRate = (totalResponses / 80) * 100;
+        const responseRate = (totalResponses / 75) * 100;
 
         // Format type
         const type = questionData.question_type === 'multiple-choice' ? 'Multiple Choice' : 
@@ -222,7 +222,7 @@ const Analytics = () => {
                       <div className="flex items-center gap-3 flex-wrap">
                         <Badge className={getQuestionTypeColor(realQuestion.type)}>{realQuestion.type}</Badge>
                         <span className="text-sm text-muted-foreground">
-                          {realQuestion.totalResponses}/80 responses
+                          {realQuestion.totalResponses}/75 responses
                         </span>
                         <span className={`text-sm flex items-center font-medium ${
                           realQuestion.responseRate > 85 ? 'text-success' : 
