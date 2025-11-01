@@ -38,13 +38,29 @@ const Profile = () => {
       if (error) {
         console.error('Error fetching leaderboard:', error);
       } else if (data) {
-        setLeaderboardData(data);
+        // Add current user if not in database
+        const currentUser: LeaderboardUser = {
+          id: 'current-user',
+          username: 'Jane Doe',
+          level: userProgress.level,
+          total_xp: userProgress.totalXP,
+          current_xp: userProgress.currentXP,
+        };
+
+        // Check if current user already exists in data
+        const userExists = data.some(user => user.username === 'Jane Doe');
+        
+        // Combine and sort
+        const combined = userExists ? data : [...data, currentUser];
+        const sorted = combined.sort((a, b) => b.total_xp - a.total_xp);
+        
+        setLeaderboardData(sorted);
       }
       setIsLoadingLeaderboard(false);
     };
 
     fetchLeaderboard();
-  }, []);
+  }, [userProgress]);
 
   const unlockedRewards = getUnlockedRewards(userProgress.level);
   const allRewards = getLevelRewards();
@@ -161,6 +177,7 @@ const Profile = () => {
                 {leaderboardData.map((user, index) => {
                   const rank = index + 1;
                   const isTopThree = rank <= 3;
+                  const isCurrentUser = user.username === 'Jane Doe';
                   const medalColors = {
                     1: "text-yellow-500",
                     2: "text-gray-400",
@@ -171,7 +188,9 @@ const Profile = () => {
                     <div
                       key={user.id}
                       className={`flex items-center gap-4 p-4 rounded-lg transition-all animate-fade-in ${
-                        isTopThree
+                        isCurrentUser
+                          ? "bg-gradient-to-r from-primary/20 to-accent/20 border-2 border-primary/50 hover:border-primary/70 ring-2 ring-primary/30"
+                          : isTopThree
                           ? "bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20 hover:border-primary/40"
                           : "bg-muted/30 hover:bg-muted/50"
                       }`}
@@ -201,6 +220,11 @@ const Profile = () => {
                       <div className="flex-1 min-w-0">
                         <p className={`font-semibold truncate ${isTopThree ? "text-lg" : ""}`}>
                           {user.username}
+                          {isCurrentUser && (
+                            <Badge className="ml-2 bg-primary text-primary-foreground border-0 text-xs">
+                              You
+                            </Badge>
+                          )}
                         </p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <span>Level {user.level}</span>
