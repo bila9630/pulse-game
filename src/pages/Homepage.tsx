@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HorseRaceAnimation } from "@/components/HorseRaceAnimation";
 import { WordCloudResults } from "@/components/WordCloudResults";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   UserProgress, 
@@ -616,12 +617,20 @@ const Homepage = () => {
 
             {currentQuestion.type === "open-ended" && (
               <div className="space-y-4">
-                <Textarea
-                  placeholder="Share your thoughts..."
-                  value={openAnswer}
-                  onChange={(e) => setOpenAnswer(e.target.value)}
-                  className="min-h-[150px] text-base resize-none"
-                />
+                <div className="relative">
+                  <Textarea
+                    placeholder="Share your thoughts..."
+                    value={openAnswer}
+                    onChange={(e) => setOpenAnswer(e.target.value)}
+                    className="min-h-[150px] text-base resize-none pr-14"
+                  />
+                  <div className="absolute bottom-3 right-3">
+                    <VoiceRecorder
+                      onTranscription={(text) => setOpenAnswer(prev => prev ? `${prev} ${text}` : text)}
+                      disabled={false}
+                    />
+                  </div>
+                </div>
                 <div className="flex gap-2">
                   <Button
                     className="flex-1"
