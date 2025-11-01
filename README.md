@@ -1,4 +1,4 @@
-# vibeVote 🎮
+# vibeVote
 
 A gamified employee feedback platform that transforms organizational feedback into an engaging experience through game mechanics, AI-powered insights, and competitive elements.
 
