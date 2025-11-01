@@ -15,6 +15,7 @@ import { IdeationQuestion } from "@/components/IdeationQuestion";
 import { DailyStreakCard } from "@/components/DailyStreakCard";
 import { LevelUpModal } from "@/components/LevelUpModal";
 import { ProposeQuestionDialog } from "@/components/ProposeQuestionDialog";
+import { LeaderboardSidebar } from "@/components/LeaderboardSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   UserProgress, 
@@ -902,7 +903,9 @@ const Homepage = () => {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <>
+      <LeaderboardSidebar />
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-start justify-between mb-4">
@@ -1347,6 +1350,7 @@ const Homepage = () => {
         onOpenChange={setShowProposeDialog}
       />
     </div>
+    </>
   );
 };
 
