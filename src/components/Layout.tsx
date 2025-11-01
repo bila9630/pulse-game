@@ -1,15 +1,18 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { BottomNav } from "./BottomNav";
+import { SearchDialog } from "./SearchDialog";
 import { Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  const [searchOpen, setSearchOpen] = useState(false);
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-background to-muted">
@@ -22,14 +25,19 @@ export function Layout({ children }: LayoutProps) {
 
             {/* Search Bar */}
             <div className="flex-1 max-w-md hidden sm:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search questions, insights..."
-                  className="pl-9 bg-background"
-                />
-              </div>
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="relative w-full h-10 px-3 py-2 text-sm text-left text-muted-foreground bg-background border border-input rounded-md hover:bg-accent transition-colors"
+              >
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                <span className="pl-6">Search questions, insights...</span>
+                <kbd className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              </button>
             </div>
+
+            <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
 
             {/* Right Actions */}
             <div className="ml-auto flex items-center gap-2">
