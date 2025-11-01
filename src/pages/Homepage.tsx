@@ -988,7 +988,7 @@ const Homepage = () => {
               <span className="text-3xl font-bold">Level {userProgress.level}</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {userProgress.currentXP} / {getXPForLevel(userProgress.level)} XP
+              {userProgress.currentXP} XP
             </p>
           </div>
         </div>

@@ -131,7 +131,7 @@ export function AppSidebar() {
               <div className="space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Level {userProgress.level}</span>
-                  <span className="font-medium">{userProgress.currentXP} / {xpForNextLevel} XP</span>
+                  <span className="font-medium">{userProgress.currentXP} XP</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div 
