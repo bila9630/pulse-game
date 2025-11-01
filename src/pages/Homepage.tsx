@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Trophy, BarChart3, Play, List, Lightbulb, Filter, X } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Trophy, BarChart3, Play, List, Lightbulb, Filter, X, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WordCloudResults } from "@/components/WordCloudResults";
@@ -92,6 +93,7 @@ const Homepage = () => {
   // Filter state
   const [selectedTypes, setSelectedTypes] = useState<QuestionType[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   
   // Evaluation state
   const [evaluationResult, setEvaluationResult] = useState<{
@@ -1112,83 +1114,96 @@ const Homepage = () => {
           </div>
 
           {/* Filters Section */}
-          <Card className="p-4 mb-6 border-2">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">Filters</h3>
-                  {hasActiveFilters && (
-                    <Badge variant="secondary" className="ml-2">
-                      {selectedTypes.length + selectedCategories.length} active
-                    </Badge>
+          <Collapsible open={filtersOpen} onOpenChange={setFiltersOpen} className="mb-6">
+            <Card className="border-2">
+              <CollapsibleTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="w-full p-4 flex items-center justify-between hover:bg-transparent"
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold">Filters</h3>
+                    {hasActiveFilters && (
+                      <Badge variant="secondary" className="ml-2">
+                        {selectedTypes.length + selectedCategories.length} active
+                      </Badge>
+                    )}
+                  </div>
+                  <ChevronDown className={`h-5 w-5 transition-transform ${filtersOpen ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent>
+                <div className="px-4 pb-4 space-y-4 border-t pt-4">
+                  <div className="flex justify-end">
+                    {hasActiveFilters && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleResetFilters}
+                        className="gap-2"
+                      >
+                        <X className="h-4 w-4" />
+                        Reset Filters
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Question Type Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Question Type</label>
+                    <ToggleGroup 
+                      type="multiple" 
+                      value={selectedTypes}
+                      onValueChange={(value) => setSelectedTypes(value as QuestionType[])}
+                      className="justify-start flex-wrap"
+                    >
+                      <ToggleGroupItem value="ideation" className="gap-2">
+                        <Lightbulb className="h-4 w-4" />
+                        Ideation
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="yes-no" className="gap-2">
+                        <ThumbsUp className="h-4 w-4" />
+                        Yes/No
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="multiple-choice" className="gap-2">
+                        <List className="h-4 w-4" />
+                        Multiple Choice
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="open-ended" className="gap-2">
+                        <Star className="h-4 w-4" />
+                        Open-ended
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="ranking" className="gap-2">
+                        <Trophy className="h-4 w-4" />
+                        Ranking
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+                  </div>
+
+                  {/* Category Filter */}
+                  {uniqueCategories.length > 0 && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-muted-foreground">Topic</label>
+                      <ToggleGroup 
+                        type="multiple" 
+                        value={selectedCategories}
+                        onValueChange={setSelectedCategories}
+                        className="justify-start flex-wrap"
+                      >
+                        {uniqueCategories.map((category) => (
+                          <ToggleGroupItem key={category} value={category}>
+                            {category}
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
+                    </div>
                   )}
                 </div>
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleResetFilters}
-                    className="gap-2"
-                  >
-                    <X className="h-4 w-4" />
-                    Reset
-                  </Button>
-                )}
-              </div>
-
-              {/* Question Type Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">Question Type</label>
-                <ToggleGroup 
-                  type="multiple" 
-                  value={selectedTypes}
-                  onValueChange={(value) => setSelectedTypes(value as QuestionType[])}
-                  className="justify-start flex-wrap"
-                >
-                  <ToggleGroupItem value="ideation" className="gap-2">
-                    <Lightbulb className="h-4 w-4" />
-                    Ideation
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="yes-no" className="gap-2">
-                    <ThumbsUp className="h-4 w-4" />
-                    Yes/No
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="multiple-choice" className="gap-2">
-                    <List className="h-4 w-4" />
-                    Multiple Choice
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="open-ended" className="gap-2">
-                    <Star className="h-4 w-4" />
-                    Open-ended
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="ranking" className="gap-2">
-                    <Trophy className="h-4 w-4" />
-                    Ranking
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </div>
-
-              {/* Category Filter */}
-              {uniqueCategories.length > 0 && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-muted-foreground">Topic</label>
-                  <ToggleGroup 
-                    type="multiple" 
-                    value={selectedCategories}
-                    onValueChange={setSelectedCategories}
-                    className="justify-start flex-wrap"
-                  >
-                    {uniqueCategories.map((category) => (
-                      <ToggleGroupItem key={category} value={category}>
-                        {category}
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
-                </div>
-              )}
-            </div>
-          </Card>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
 
           {/* Tabs Content */}
           <Tabs value={activeTab} className="space-y-6">
