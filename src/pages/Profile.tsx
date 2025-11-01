@@ -98,6 +98,11 @@ const Profile = () => {
   const allRewards = getLevelRewards();
   const xpToNextLevel = getXPForLevel(userProgress.level);
 
+  // Calculate actual rank from leaderboard
+  const currentUserRank = leaderboardData.findIndex(user => 
+    user.username === 'Jane Doe' || user.id === 'current-user'
+  ) + 1; // +1 because index is 0-based
+
   const userStats = {
     name: "Jane Doe",
     level: userProgress.level,
@@ -106,7 +111,7 @@ const Profile = () => {
     totalResponses: 47,
     streak: 12,
     achievements: unlockedRewards.length,
-    rank: "#23",
+    rank: currentUserRank > 0 ? `#${currentUserRank}` : "#-",
     joinDate: "January 2025",
   };
 
