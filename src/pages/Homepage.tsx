@@ -325,7 +325,7 @@ const Homepage = () => {
             )}
             
             {currentQuestion.type === "ranking" && gameComplete && (
-              <div className="space-y-6">
+              <div className="space-y-6 max-h-[70vh] overflow-y-auto">
                 <div className="text-center">
                   <Trophy className="h-16 w-16 text-success mx-auto mb-4" />
                   <h3 className="text-3xl font-semibold mb-2">Your Ultimate Pick: {winner?.emoji} {winner?.name}</h3>
@@ -350,9 +350,11 @@ const Homepage = () => {
                       </div>
                     ))}
                 </div>
-                <Button className="w-full" onClick={completeRankingGame}>
-                  Complete & Earn {currentQuestion.xpReward} XP
-                </Button>
+                <div className="sticky bottom-0 bg-card pt-4">
+                  <Button className="w-full" onClick={completeRankingGame}>
+                    Complete & Earn {currentQuestion.xpReward} XP
+                  </Button>
+                </div>
               </div>
             )}
           </div>
