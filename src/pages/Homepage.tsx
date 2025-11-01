@@ -1144,17 +1144,16 @@ const Homepage = () => {
                 <Card className="mb-6 border-2">
                   <div className="p-4 space-y-4">
                     <div className="flex justify-end">
-                      {hasActiveFilters && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleResetFilters}
-                          className="gap-2"
-                        >
-                          <X className="h-4 w-4" />
-                          Reset Filters
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleResetFilters}
+                        className="gap-2"
+                        disabled={!hasActiveFilters}
+                      >
+                        <X className="h-4 w-4" />
+                        Reset Filters
+                      </Button>
                     </div>
 
                     {/* Question Type Filter */}
