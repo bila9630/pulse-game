@@ -300,18 +300,9 @@ const Homepage = () => {
         setShowLevelUp(true);
       }
       
-      // Show ranking results before moving to next question
-      // Wait a moment to allow the user to see the results
-      setTimeout(() => {
-        setAnsweredQuestions([...answeredQuestions, currentQuestion.id]);
-        setCurrentQuestion(null);
-        setRankingStarted(false);
-      }, 2000);
-      
-      // Navigate to analytics page to see results
-      setTimeout(() => {
-        window.location.href = `/analytics/${currentQuestion.id}`;
-      }, 2500);
+      setAnsweredQuestions([...answeredQuestions, currentQuestion.id]);
+      setCurrentQuestion(null);
+      setRankingStarted(false);
     }
   };
   
