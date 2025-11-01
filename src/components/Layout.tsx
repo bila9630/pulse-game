@@ -13,14 +13,14 @@ export function Layout({ children }: LayoutProps) {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-to-br from-background via-background to-muted">
         <AppSidebar />
-        
+
         <div className="flex-1 flex flex-col w-full">
           {/* Top Header */}
-          <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 flex items-center px-4 gap-4">
-            <SidebarTrigger />
-            
+          <header className="h-16 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-40 flex items-center px-4 gap-4">
+            <SidebarTrigger className="shrink-0" />
+
             {/* Search Bar */}
-            <div className="flex-1 max-w-md">
+            <div className="flex-1 max-w-md hidden sm:block">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -36,7 +36,7 @@ export function Layout({ children }: LayoutProps) {
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-accent rounded-full" />
               </Button>
-              
+
               <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground font-semibold text-sm shadow-md">
                 JD
               </div>
