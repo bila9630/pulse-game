@@ -4,17 +4,18 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Flame } from "lucide-react";
+import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Flame, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type QuestionType = "multiple-choice" | "open-ended" | "yes-no";
+type QuestionType = "multiple-choice" | "open-ended" | "yes-no" | "ranking";
 
 interface Question {
   id: number;
   type: QuestionType;
   question: string;
   options?: string[];
+  rankingOptions?: Array<{ name: string; emoji: string; wins: number }>;
   category: string;
   xpReward: number;
   timeAgo: string;
@@ -63,6 +64,21 @@ const availableQuestions: Question[] = [
     xpReward: 50,
     timeAgo: "2d ago",
   },
+  {
+    id: 6,
+    type: "ranking",
+    question: "What's your favorite food in the canteen?",
+    rankingOptions: [
+      { name: "Croissants", emoji: "🥐", wins: 0 },
+      { name: "Muffins", emoji: "🧁", wins: 0 },
+      { name: "Cookies", emoji: "🍪", wins: 0 },
+      { name: "Macarons", emoji: "🍬", wins: 0 },
+      { name: "Donuts", emoji: "🍩", wins: 0 },
+    ],
+    category: "Canteen",
+    xpReward: 100,
+    timeAgo: "3h ago",
+  },
 ];
 
 const Homepage = () => {
@@ -71,6 +87,15 @@ const Homepage = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [openAnswer, setOpenAnswer] = useState("");
+  
+  // Ranking game state
+  const [gameStarted, setGameStarted] = useState(false);
+  const [currentRound, setCurrentRound] = useState(0);
+  const [remainingOptions, setRemainingOptions] = useState<any[]>([]);
+  const [currentPair, setCurrentPair] = useState<any[]>([]);
+  const [winner, setWinner] = useState<any>(null);
+  const [gameComplete, setGameComplete] = useState(false);
+  const [userRanking, setUserRanking] = useState<any[]>([]);
 
   const handleStartQuestion = (question: Question) => {
     setCurrentQuestion(question);
@@ -100,6 +125,59 @@ const Homepage = () => {
   const handleSwipe = (direction: "left" | "right") => {
     const answer = direction === "right" ? "Yes" : "No";
     handleAnswer(answer);
+  };
+  
+  const startRankingGame = () => {
+    if (currentQuestion?.rankingOptions) {
+      const shuffled = [...currentQuestion.rankingOptions].sort(() => Math.random() - 0.5);
+      setRemainingOptions(shuffled);
+      setCurrentPair([shuffled[0], shuffled[1]]);
+      setGameStarted(true);
+      setCurrentRound(1);
+      setGameComplete(false);
+      setUserRanking([]);
+    }
+  };
+  
+  const handleRankingChoice = (chosen: any, notChosen: any) => {
+    const updatedRanking = [...userRanking];
+    const chosenIndex = updatedRanking.findIndex(item => item.name === chosen.name);
+    
+    if (chosenIndex === -1) {
+      updatedRanking.push({ ...chosen, wins: 1 });
+    } else {
+      updatedRanking[chosenIndex].wins += 1;
+    }
+    
+    setUserRanking(updatedRanking);
+    
+    // Get next challenger
+    const currentIndex = remainingOptions.findIndex(opt => opt.name === notChosen.name);
+    const nextIndex = (currentIndex + 2) % remainingOptions.length;
+    
+    if (currentRound >= 10) {
+      // Game complete after 10 rounds
+      setWinner(chosen);
+      setGameComplete(true);
+    } else {
+      setCurrentPair([chosen, remainingOptions[nextIndex]]);
+      setCurrentRound(currentRound + 1);
+    }
+  };
+  
+  const completeRankingGame = () => {
+    if (currentQuestion) {
+      toast.success(`+${currentQuestion.xpReward} XP!`, {
+        description: "Ranking complete!",
+        icon: <Trophy className="h-4 w-4 text-accent" />,
+      });
+      
+      setAnsweredQuestions([...answeredQuestions, currentQuestion.id]);
+      setCurrentQuestion(null);
+      setGameStarted(false);
+      setGameComplete(false);
+      setUserRanking([]);
+    }
   };
 
   const renderQuestionModal = () => {
@@ -187,6 +265,81 @@ const Homepage = () => {
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCurrentQuestion(null)}>
                   Cancel
+                </Button>
+              </div>
+            )}
+            
+            {/* Ranking Game */}
+            {currentQuestion.type === "ranking" && !gameStarted && (
+              <div className="text-center space-y-4">
+                <Trophy className="h-16 w-16 text-primary mx-auto" />
+                <div>
+                  <h3 className="text-2xl font-semibold mb-2">Pairwise Ranking Game</h3>
+                  <p className="text-muted-foreground">
+                    Compare your preferences two at a time. Choose your favorite in each round!
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="lg" className="flex-1" onClick={startRankingGame}>
+                    Start Ranking Game
+                  </Button>
+                  <Button variant="outline" onClick={() => setCurrentQuestion(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            {currentQuestion.type === "ranking" && gameStarted && !gameComplete && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <Badge variant="outline" className="mb-4">Round {currentRound} of 10</Badge>
+                  <h3 className="text-2xl font-semibold mb-2">Which do you prefer?</h3>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {currentPair.map((option, idx) => (
+                    <Button
+                      key={idx}
+                      variant="outline"
+                      className="h-32 text-4xl hover:bg-primary hover:text-primary-foreground transition-all hover:scale-105"
+                      onClick={() => handleRankingChoice(option, currentPair[1 - idx])}
+                    >
+                      {option.emoji}
+                      <span className="ml-3 text-lg">{option.name}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {currentQuestion.type === "ranking" && gameComplete && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <Trophy className="h-16 w-16 text-success mx-auto mb-4" />
+                  <h3 className="text-3xl font-semibold mb-2">Your Ultimate Pick: {winner?.emoji} {winner?.name}</h3>
+                  <p className="text-muted-foreground">
+                    Your taste profile: Sweet over flaky, comfort over elegance
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <h4 className="text-xl font-semibold">Your Personal Ranking:</h4>
+                  {userRanking
+                    .sort((a, b) => b.wins - a.wins)
+                    .map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+                            {idx + 1}
+                          </div>
+                          <span className="text-2xl">{item.emoji}</span>
+                          <span className="font-medium">{item.name}</span>
+                        </div>
+                        <span className="text-muted-foreground">{item.wins} wins</span>
+                      </div>
+                    ))}
+                </div>
+                <Button className="w-full" onClick={completeRankingGame}>
+                  Complete & Earn {currentQuestion.xpReward} XP
                 </Button>
               </div>
             )}
