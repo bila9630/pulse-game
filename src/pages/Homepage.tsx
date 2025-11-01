@@ -47,6 +47,7 @@ const Homepage = () => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [openAnswer, setOpenAnswer] = useState("");
   const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
+  const [showChallengeSurface, setShowChallengeSurface] = useState(true);
   
   // Ranking game state
   const [rankingStarted, setRankingStarted] = useState(false);
@@ -484,8 +485,31 @@ const Homepage = () => {
       {/* Daily Streak Card */}
       <DailyStreakCard isMobile={isMobile} />
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      {/* Challenge Surface */}
+      {showChallengeSurface ? (
+        <Card className="p-12 text-center space-y-6 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20 animate-fade-in">
+          <div className="space-y-4">
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto">
+              <Star className="h-8 w-8 text-primary-foreground" />
+            </div>
+            <h2 className="text-3xl font-bold">Ready for today's questions?</h2>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              Complete your {availableQuestions.length - answeredQuestions.length} daily questions to earn XP and track your progress.
+            </p>
+          </div>
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+            onClick={() => setShowChallengeSurface(false)}
+          >
+            Start Questions
+            <ChevronRight className="ml-2 h-5 w-5" />
+          </Button>
+        </Card>
+      ) : (
+        <>
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-2 max-w-md">
           <TabsTrigger value="new">
             New ({availableQuestions.length - answeredQuestions.length})
@@ -570,7 +594,9 @@ const Homepage = () => {
             </div>
           )}
         </TabsContent>
-      </Tabs>
+          </Tabs>
+        </>
+      )}
 
       {renderQuestionModal()}
       
