@@ -200,29 +200,22 @@ const Homepage = () => {
 
   const handleSkipQuestion = () => {
     if (currentQuestion) {
-      setEvaluationResult({
-        xp: 0,
-        feedback: "Question skipped",
-        questionId: currentQuestion.id,
-        answer: ""
-      });
-      setShowEvaluation(true);
-      setUndoAvailable(true);
-      
-      // Start undo timer
+      // Clear any existing timers
+      if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
       if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-      undoTimerRef.current = setTimeout(() => {
-        setUndoAvailable(false);
-      }, 5000);
       
-      // In Play Mode, auto-advance
-      if (viewMode === "play") {
-        if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-        evaluationTimerRef.current = setTimeout(() => {
-          handleNext();
-        }, 1500);
-      }
+      // Reset state
+      setShowEvaluation(false);
+      setEvaluationResult(null);
+      setUndoAvailable(false);
+      setOpenAnswer("");
       
+      // Find next question without marking current as answered
+      const nextQuestion = availableQuestions.find(
+        (q) => q.id !== currentQuestion.id && !answeredQuestions.includes(q.id)
+      );
+      
+      setCurrentQuestion(nextQuestion || null);
       toast.info("Question skipped", { duration: 2000 });
     }
   };
