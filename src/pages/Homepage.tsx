@@ -350,6 +350,98 @@ const Homepage = () => {
                       </div>
                     ))}
                 </div>
+                
+                {/* Colleagues' Results Section */}
+                <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xl font-semibold">Colleagues' Rankings</h4>
+                    <Badge variant="secondary">8 responses</Badge>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {/* Colleague 1 */}
+                    <Card className="p-4 bg-muted/30">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold">
+                          JD
+                        </div>
+                        <div>
+                          <p className="font-semibold">John Doe</p>
+                          <p className="text-sm text-muted-foreground">Marketing Team • 2h ago</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { emoji: "🍩", name: "Donuts", position: 1 },
+                          { emoji: "🍬", name: "Macarons", position: 2 },
+                          { emoji: "🥐", name: "Croissants", position: 3 },
+                        ].map((item) => (
+                          <div key={item.position} className="flex items-center gap-3 text-sm">
+                            <span className="text-muted-foreground w-4">#{item.position}</span>
+                            <span className="text-lg">{item.emoji}</span>
+                            <span>{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    
+                    {/* Colleague 2 */}
+                    <Card className="p-4 bg-muted/30">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-semibold">
+                          AS
+                        </div>
+                        <div>
+                          <p className="font-semibold">Alice Smith</p>
+                          <p className="text-sm text-muted-foreground">Engineering Team • 4h ago</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { emoji: "🥐", name: "Croissants", position: 1 },
+                          { emoji: "🍪", name: "Cookies", position: 2 },
+                          { emoji: "🧁", name: "Muffins", position: 3 },
+                        ].map((item) => (
+                          <div key={item.position} className="flex items-center gap-3 text-sm">
+                            <span className="text-muted-foreground w-4">#{item.position}</span>
+                            <span className="text-lg">{item.emoji}</span>
+                            <span>{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    
+                    {/* Colleague 3 */}
+                    <Card className="p-4 bg-muted/30">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-semibold">
+                          MJ
+                        </div>
+                        <div>
+                          <p className="font-semibold">Michael Johnson</p>
+                          <p className="text-sm text-muted-foreground">Design Team • 5h ago</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { emoji: "🍬", name: "Macarons", position: 1 },
+                          { emoji: "🍩", name: "Donuts", position: 2 },
+                          { emoji: "🍪", name: "Cookies", position: 3 },
+                        ].map((item) => (
+                          <div key={item.position} className="flex items-center gap-3 text-sm">
+                            <span className="text-muted-foreground w-4">#{item.position}</span>
+                            <span className="text-lg">{item.emoji}</span>
+                            <span>{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                    
+                    <Button variant="outline" className="w-full">
+                      View All 8 Responses
+                    </Button>
+                  </div>
+                </div>
                 <div className="sticky bottom-0 bg-card pt-4">
                   <Button className="w-full" onClick={completeRankingGame}>
                     Complete & Earn {currentQuestion.xpReward} XP
