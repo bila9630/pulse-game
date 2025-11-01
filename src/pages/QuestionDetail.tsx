@@ -175,7 +175,7 @@ const QuestionDetail = () => {
       }
 
       const totalResponses = responsesData.length;
-      const responseRate = totalResponses > 0 ? 100 : 0;
+      const responseRate = (totalResponses / 75) * 100;
 
       if (questionData.question_type === 'open-ended' || questionData.question_type === 'ideation') {
         // For open-ended and ideation questions, analyze trends
