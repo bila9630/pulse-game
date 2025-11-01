@@ -151,16 +151,28 @@ const Homepage = () => {
     
     setUserRanking(updatedRanking);
     
-    // Get next challenger
-    const currentIndex = remainingOptions.findIndex(opt => opt.name === notChosen.name);
-    const nextIndex = (currentIndex + 2) % remainingOptions.length;
-    
     if (currentRound >= 10) {
       // Game complete after 10 rounds
       setWinner(chosen);
       setGameComplete(true);
     } else {
-      setCurrentPair([chosen, remainingOptions[nextIndex]]);
+      // Create a pool of options excluding the current winner
+      const availableOpponents = remainingOptions.filter(opt => opt.name !== chosen.name);
+      
+      // Find the next opponent that's not the one just defeated
+      let nextOpponent;
+      const notChosenIndex = availableOpponents.findIndex(opt => opt.name === notChosen.name);
+      
+      if (notChosenIndex !== -1 && availableOpponents.length > 1) {
+        // Get the next option after the defeated one (wrap around if needed)
+        const nextIndex = (notChosenIndex + 1) % availableOpponents.length;
+        nextOpponent = availableOpponents[nextIndex];
+      } else {
+        // Fallback: just pick the first available opponent
+        nextOpponent = availableOpponents[0];
+      }
+      
+      setCurrentPair([chosen, nextOpponent]);
       setCurrentRound(currentRound + 1);
     }
   };
