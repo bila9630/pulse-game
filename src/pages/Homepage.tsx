@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Trophy, BarChart3 } from "lucide-react";
+import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Trophy, BarChart3, Play, List } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { WordCloudResults } from "@/components/WordCloudResults";
@@ -48,6 +48,7 @@ const Homepage = () => {
   const [openAnswer, setOpenAnswer] = useState("");
   const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
   const [showChallengeSurface, setShowChallengeSurface] = useState(true);
+  const [viewMode, setViewMode] = useState<"list" | "play">("list");
   
   // Ranking game state
   const [rankingStarted, setRankingStarted] = useState(false);
@@ -131,8 +132,35 @@ const Homepage = () => {
     loadQuestions();
   }, []);
 
+  // Auto-start first question in Play Mode
+  useEffect(() => {
+    if (viewMode === "play" && !currentQuestion && !showChallengeSurface) {
+      const firstUnanswered = availableQuestions.find(
+        (q) => !answeredQuestions.includes(q.id)
+      );
+      if (firstUnanswered) {
+        setCurrentQuestion(firstUnanswered);
+      }
+    }
+  }, [viewMode, currentQuestion, availableQuestions, answeredQuestions, showChallengeSurface]);
+
   const handleStartQuestion = (question: Question) => {
     setCurrentQuestion(question);
+  };
+
+  const handleSkipQuestion = () => {
+    if (currentQuestion) {
+      const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+      setAnsweredQuestions(newAnsweredQuestions);
+      
+      const nextQuestion = availableQuestions.find(
+        (q) => !newAnsweredQuestions.includes(q.id)
+      );
+      
+      setCurrentQuestion(nextQuestion || null);
+      setOpenAnswer("");
+      toast.info("Question skipped");
+    }
   };
 
   const handleAnswer = async (answer: string) => {
@@ -310,25 +338,37 @@ const Homepage = () => {
   const renderQuestionModal = () => {
     if (!currentQuestion) return null;
 
+    const isPlayMode = viewMode === "play";
+
     return (
       <div 
         className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
-        onClick={() => setCurrentQuestion(null)}
+        onClick={() => !isPlayMode && setCurrentQuestion(null)}
       >
         <Card 
           className="max-w-2xl w-full p-8 shadow-2xl animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="space-y-6">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
-                <Star className="h-5 w-5 text-primary-foreground" />
+            <div className="space-y-6">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+                  <Star className="h-5 w-5 text-primary-foreground" />
+                </div>
+                <div className="flex-1">
+                  <Badge className="mb-2">{currentQuestion.category}</Badge>
+                  <h2 className="text-2xl font-bold leading-tight">{currentQuestion.question}</h2>
+                </div>
+                {isPlayMode && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSkipQuestion}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Skip
+                  </Button>
+                )}
               </div>
-              <div className="flex-1">
-                <Badge className="mb-2">{currentQuestion.category}</Badge>
-                <h2 className="text-2xl font-bold leading-tight">{currentQuestion.question}</h2>
-              </div>
-            </div>
 
             {/* Render based on type */}
             {currentQuestion.type === "multiple-choice" && (
@@ -370,9 +410,11 @@ const Homepage = () => {
                   >
                     Submit Answer
                   </Button>
-                  <Button variant="outline" onClick={() => setCurrentQuestion(null)}>
-                    Cancel
-                  </Button>
+                  {!isPlayMode && (
+                    <Button variant="outline" onClick={() => setCurrentQuestion(null)}>
+                      Cancel
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -398,9 +440,11 @@ const Homepage = () => {
                     <ThumbsUp className="h-8 w-8" />
                   </Button>
                 </div>
-                <Button variant="outline" className="w-full" onClick={() => setCurrentQuestion(null)}>
-                  Cancel
-                </Button>
+                {!isPlayMode && (
+                  <Button variant="outline" className="w-full" onClick={() => setCurrentQuestion(null)}>
+                    Cancel
+                  </Button>
+                )}
               </div>
             )}
             
@@ -508,24 +552,61 @@ const Homepage = () => {
         </Card>
       ) : (
         <>
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 max-w-md">
-          <TabsTrigger value="new">
-            New ({availableQuestions.length - answeredQuestions.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed">Completed ({answeredQuestions.length})</TabsTrigger>
-        </TabsList>
+          {/* View Mode Toggle */}
+          <div className="flex items-center justify-between mb-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-2">
+                <TabsTrigger value="new">
+                  New ({availableQuestions.length - answeredQuestions.length})
+                </TabsTrigger>
+                <TabsTrigger value="completed">Completed ({answeredQuestions.length})</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
+            <div className="flex items-center gap-2 bg-muted p-1 rounded-lg">
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="gap-2"
+              >
+                <List className="h-4 w-4" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === "play" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setViewMode("play");
+                  if (!currentQuestion) {
+                    const firstUnanswered = availableQuestions.find(
+                      (q) => !answeredQuestions.includes(q.id)
+                    );
+                    if (firstUnanswered) {
+                      setCurrentQuestion(firstUnanswered);
+                    }
+                  }
+                }}
+                className="gap-2"
+              >
+                <Play className="h-4 w-4" />
+                Play
+              </Button>
+            </div>
+          </div>
 
-        <TabsContent value="new" className="space-y-4">
-          {filteredQuestions.length === 0 ? (
-            <Card className="p-12 text-center">
-              <Star className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-bold mb-2">All caught up! 🎉</h3>
-              <p className="text-muted-foreground">Check back later for new questions</p>
-            </Card>
-          ) : (
-            filteredQuestions.map((question, index) => (
+          {/* Tabs Content */}
+          <Tabs value={activeTab} className="space-y-6">
+
+            <TabsContent value="new" className="space-y-4">
+              {filteredQuestions.length === 0 ? (
+                <Card className="p-12 text-center">
+                  <Star className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-xl font-bold mb-2">All caught up! 🎉</h3>
+                  <p className="text-muted-foreground">Check back later for new questions</p>
+                </Card>
+              ) : viewMode === "list" ? (
+                filteredQuestions.map((question, index) => (
               <Card
                 key={question.id}
                 className="p-6 shadow-md hover:shadow-xl transition-all cursor-pointer animate-fade-in hover:scale-[1.02] border-2 border-transparent hover:border-primary/20"
@@ -558,11 +639,22 @@ const Homepage = () => {
                       <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </TabsContent>
+                  </div>
+                </Card>
+              ))
+              ) : (
+                <Card className="p-12 text-center space-y-4 bg-gradient-to-br from-primary/5 to-accent/5 border-2 border-primary/20">
+                  <Play className="h-16 w-16 mx-auto text-primary" />
+                  <h3 className="text-2xl font-bold">Play Mode Active</h3>
+                  <p className="text-muted-foreground">
+                    Questions will appear automatically. Answer or skip to continue!
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {filteredQuestions.length} question{filteredQuestions.length !== 1 ? 's' : ''} remaining
+                  </p>
+                </Card>
+              )}
+          </TabsContent>
 
         <TabsContent value="completed" className="space-y-4">
           {answeredQuestions.length === 0 ? (
