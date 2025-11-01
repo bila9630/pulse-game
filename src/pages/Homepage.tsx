@@ -1089,46 +1089,59 @@ const Homepage = () => {
           onClick={handleRankingResultsClose}
         >
           <Card 
-            className="max-w-3xl w-full p-8 shadow-2xl animate-scale-in max-h-[90vh] overflow-y-auto"
+            className="max-w-3xl w-full p-8 shadow-2xl animate-scale-in max-h-[90vh] overflow-y-auto border-2 border-primary/20"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="space-y-6">
               <div className="text-center">
-                <Trophy className="h-16 w-16 mx-auto mb-4 text-primary" />
-                <h2 className="text-2xl font-bold mb-2">See How Colleagues Ranked</h2>
-                <p className="text-muted-foreground">Compare your ranking with others</p>
+                <div className="relative inline-block mb-4">
+                  <Trophy className="h-20 w-20 text-primary animate-pulse" />
+                  <span className="absolute -top-2 -right-2 text-3xl">🎉</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  Rankings Are In! 🏆
+                </h2>
+                <p className="text-muted-foreground">See how you compare with your colleagues</p>
               </div>
 
               {/* Your Ranking */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <span className="text-primary">Your Ranking</span>
-                </h3>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">⭐</span>
+                  <h3 className="text-xl font-bold text-primary">Your Top Picks</h3>
+                </div>
                 <div className="space-y-2">
                   {userRanking.slice(0, 3).map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg border-2 border-primary/20">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
-                        {index + 1}
+                    <div 
+                      key={index} 
+                      className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/20 to-primary/10 rounded-xl border-2 border-primary/30 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-primary-foreground font-bold text-lg shadow-md">
+                        {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
                       </div>
-                      <span className="font-medium text-lg">{item}</span>
+                      <span className="font-semibold text-lg">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Colleague 1 Ranking */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <span className="text-muted-foreground">Sarah's Ranking</span>
-                </h3>
+              <div className="space-y-3 p-4 bg-muted/30 rounded-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">👩‍💼</span>
+                  <h3 className="text-lg font-bold">Sarah's Top Picks</h3>
+                </div>
                 <div className="space-y-2">
                   {(() => {
                     // Mock ranking - shuffle the items
                     const shuffled = [...userRanking].sort(() => Math.random() - 0.5);
                     return shuffled.slice(0, 3).map((item, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted-foreground/20 flex items-center justify-center text-foreground font-bold">
-                          {index + 1}
+                      <div 
+                        key={index} 
+                        className="flex items-center gap-3 p-3 bg-background/80 rounded-lg hover:bg-background transition-colors"
+                      >
+                        <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center font-bold border-2 border-blue-500/30">
+                          {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
                         </div>
                         <span className="font-medium">{item}</span>
                       </div>
@@ -1138,18 +1151,22 @@ const Homepage = () => {
               </div>
 
               {/* Colleague 2 Ranking */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <span className="text-muted-foreground">Michael's Ranking</span>
-                </h3>
+              <div className="space-y-3 p-4 bg-muted/30 rounded-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">👨‍💼</span>
+                  <h3 className="text-lg font-bold">Michael's Top Picks</h3>
+                </div>
                 <div className="space-y-2">
                   {(() => {
                     // Mock ranking - shuffle differently
                     const shuffled = [...userRanking].sort(() => 0.5 - Math.random());
                     return shuffled.slice(0, 3).map((item, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted-foreground/20 flex items-center justify-center text-foreground font-bold">
-                          {index + 1}
+                      <div 
+                        key={index} 
+                        className="flex items-center gap-3 p-3 bg-background/80 rounded-lg hover:bg-background transition-colors"
+                      >
+                        <div className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center font-bold border-2 border-purple-500/30">
+                          {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
                         </div>
                         <span className="font-medium">{item}</span>
                       </div>
@@ -1159,10 +1176,11 @@ const Homepage = () => {
               </div>
 
               <Button 
-                className="w-full" 
+                size="lg"
+                className="w-full text-lg shadow-lg hover:shadow-xl transition-all" 
                 onClick={handleRankingResultsClose}
               >
-                Continue
+                Continue 🚀
               </Button>
             </div>
           </Card>
