@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Gift, Lock, TreePine, ArrowRight, Trophy, ShoppingBag, Check } from "lucide-react";
+import { Gift, Lock, TreePine, ArrowRight, Trophy, ShoppingBag, Check, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { loadProgress } from "@/lib/xpSystem";
 import { useState, useEffect } from "react";
@@ -14,21 +14,30 @@ interface ShopItem {
   icon: string;
   cost: number;
   levelRequired: number;
+  cooldownHours: number;
+}
+
+interface RedeemedItem {
+  id: string;
+  redeemedAt: number;
 }
 
 const shopItems: ShopItem[] = [
-  { id: "coffee", name: "☕ Coffee Voucher", description: "Redeem for a free coffee at the office", icon: "☕", cost: 500, levelRequired: 2 },
-  { id: "lunch", name: "🍕 Team Lunch", description: "Join us for a team lunch", icon: "🍕", cost: 1000, levelRequired: 5 },
-  { id: "tshirt", name: "👕 Company T-Shirt", description: "Exclusive company merchandise", icon: "👕", cost: 1500, levelRequired: 7 },
-  { id: "book", name: "📚 Book of Choice", description: "Pick any professional development book", icon: "📚", cost: 2000, levelRequired: 10 },
-  { id: "day-off", name: "🏖️ Extra Day Off", description: "Enjoy an additional day of paid leave", icon: "🏖️", cost: 5000, levelRequired: 15 },
-  { id: "conference", name: "🎯 Conference Pass", description: "Attend a professional conference", icon: "🎯", cost: 10000, levelRequired: 20 },
+  { id: "coffee", name: "☕ Coffee Voucher", description: "Redeem for a free coffee at the office", icon: "☕", cost: 500, levelRequired: 2, cooldownHours: 24 },
+  { id: "lunch", name: "🍕 Team Lunch", description: "Join us for a team lunch", icon: "🍕", cost: 1000, levelRequired: 5, cooldownHours: 168 },
+  { id: "tshirt", name: "👕 Company T-Shirt", description: "Exclusive company merchandise", icon: "👕", cost: 1500, levelRequired: 7, cooldownHours: 720 },
+  { id: "book", name: "📚 Book of Choice", description: "Pick any professional development book", icon: "📚", cost: 2000, levelRequired: 10, cooldownHours: 336 },
+  { id: "charity", name: "❤️ Charity Donation", description: "Donate to Doctors Without Borders", icon: "❤️", cost: 1200, levelRequired: 6, cooldownHours: 168 },
+  { id: "wellness", name: "🧘 Wellness Session", description: "Book a massage or yoga session", icon: "🧘", cost: 800, levelRequired: 4, cooldownHours: 72 },
+  { id: "parking", name: "🅿️ Premium Parking", description: "Reserved parking spot for a week", icon: "🅿️", cost: 600, levelRequired: 3, cooldownHours: 168 },
+  { id: "day-off", name: "🏖️ Extra Day Off", description: "Enjoy an additional day of paid leave", icon: "🏖️", cost: 5000, levelRequired: 15, cooldownHours: 2160 },
+  { id: "conference", name: "🎯 Conference Pass", description: "Attend a professional conference", icon: "🎯", cost: 10000, levelRequired: 20, cooldownHours: 4320 },
 ];
 
 const Rewards = () => {
   const navigate = useNavigate();
   const [userProgress, setUserProgress] = useState(loadProgress());
-  const [redeemedItems, setRedeemedItems] = useState<string[]>([]);
+  const [redeemedItems, setRedeemedItems] = useState<RedeemedItem[]>([]);
   const totalTreesPlanted = 127;
   
   useEffect(() => {
@@ -38,12 +47,55 @@ const Rewards = () => {
     // Load redeemed items from localStorage
     const saved = localStorage.getItem('redeemedItems');
     if (saved) {
-      setRedeemedItems(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        // Handle legacy format (array of strings)
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+          const converted = parsed.map(id => ({ id, redeemedAt: Date.now() }));
+          setRedeemedItems(converted);
+          localStorage.setItem('redeemedItems', JSON.stringify(converted));
+        } else {
+          setRedeemedItems(parsed);
+        }
+      } catch (e) {
+        setRedeemedItems([]);
+      }
     }
   }, []);
 
+  const getCooldownStatus = (item: ShopItem) => {
+    const redeemed = redeemedItems.find(r => r.id === item.id);
+    if (!redeemed) return { isOnCooldown: false, remainingHours: 0 };
+    
+    const cooldownMs = item.cooldownHours * 60 * 60 * 1000;
+    const elapsedMs = Date.now() - redeemed.redeemedAt;
+    const remainingMs = cooldownMs - elapsedMs;
+    
+    if (remainingMs <= 0) return { isOnCooldown: false, remainingHours: 0 };
+    
+    return {
+      isOnCooldown: true,
+      remainingHours: Math.ceil(remainingMs / (60 * 60 * 1000)),
+    };
+  };
+
+  const formatCooldown = (hours: number) => {
+    if (hours < 24) return `${hours}h`;
+    const days = Math.floor(hours / 24);
+    return `${days}d`;
+  };
+
   
   const handleRedeem = (item: ShopItem) => {
+    const { isOnCooldown } = getCooldownStatus(item);
+    
+    if (isOnCooldown) {
+      toast.error("Item on cooldown!", {
+        description: "This item is not available yet. Please wait for the cooldown to expire.",
+      });
+      return;
+    }
+    
     if (userProgress.totalXP < item.cost) {
       toast.error("Not enough XP!", {
         description: `You need ${item.cost - userProgress.totalXP} more XP to redeem this item.`,
@@ -58,13 +110,6 @@ const Rewards = () => {
       return;
     }
     
-    if (redeemedItems.includes(item.id)) {
-      toast.error("Already redeemed!", {
-        description: "You've already redeemed this item.",
-      });
-      return;
-    }
-    
     // Deduct XP and mark as redeemed
     const newProgress = {
       ...userProgress,
@@ -72,7 +117,7 @@ const Rewards = () => {
     };
     setUserProgress(newProgress);
     
-    const newRedeemedItems = [...redeemedItems, item.id];
+    const newRedeemedItems = [...redeemedItems.filter(r => r.id !== item.id), { id: item.id, redeemedAt: Date.now() }];
     setRedeemedItems(newRedeemedItems);
     
     // Save to localStorage
@@ -147,22 +192,28 @@ const Rewards = () => {
         {shopItems.map((item, index) => {
           const canAfford = userProgress.totalXP >= item.cost;
           const canUnlock = userProgress.level >= item.levelRequired;
-          const isRedeemed = redeemedItems.includes(item.id);
-          const canRedeem = canAfford && canUnlock && !isRedeemed;
+          const { isOnCooldown, remainingHours } = getCooldownStatus(item);
+          const canRedeem = canAfford && canUnlock && !isOnCooldown;
           
           return (
             <Card
               key={item.id}
-              className={`p-6 shadow-lg transition-all animate-fade-in ${
+              className={`p-6 shadow-lg transition-all animate-fade-in relative ${
                 !canUnlock ? "opacity-60" : canRedeem ? "hover:scale-105 hover:shadow-xl" : ""
               }`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
+              {/* Cooldown Badge */}
+              <div className="absolute top-3 left-3 flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>{formatCooldown(item.cooldownHours)}</span>
+              </div>
+
               <div className="space-y-4">
                 {/* Icon and Cost */}
                 <div className="flex items-start justify-between">
                   <div className={`text-5xl ${
-                    !canUnlock ? "grayscale opacity-50" : ""
+                    !canUnlock || isOnCooldown ? "grayscale opacity-50" : ""
                   }`}>
                     {item.icon}
                   </div>
@@ -184,10 +235,10 @@ const Rewards = () => {
 
                 {/* Footer */}
                 <div className="pt-3 border-t border-border">
-                  {isRedeemed ? (
-                    <div className="flex items-center gap-2 text-success">
-                      <Check className="h-5 w-5" />
-                      <span className="font-semibold">Redeemed!</span>
+                  {isOnCooldown ? (
+                    <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                      <Clock className="h-5 w-5" />
+                      <span className="font-semibold">Available in {formatCooldown(remainingHours)}</span>
                     </div>
                   ) : !canUnlock ? (
                     <div className="text-sm text-muted-foreground">
