@@ -9,19 +9,24 @@ export const HorseRaceAnimation = ({ isActive, speed }: HorseRaceAnimationProps)
   const [position, setPosition] = useState(0);
   
   useEffect(() => {
-    if (!isActive || speed === 0) return;
+    if (!isActive) {
+      setPosition(0);
+      return;
+    }
+    
+    if (speed === 0) return;
     
     const interval = setInterval(() => {
       setPosition((prev) => {
-        const newPos = prev + speed * 0.5;
-        return newPos >= 100 ? 0 : newPos;
+        const newPos = prev + speed * 0.3;
+        return newPos >= 95 ? 0 : newPos;
       });
     }, 50);
     
     return () => clearInterval(interval);
   }, [isActive, speed]);
   
-  const animationSpeed = speed === 0 ? 0 : Math.max(0.5, 3 - (speed / 5));
+  const animationSpeed = speed === 0 ? 0 : Math.max(0.3, 2 - (speed / 10));
   
   return (
     <div className="relative w-full h-32 bg-gradient-to-b from-sky-200 to-green-200 rounded-lg overflow-hidden border-4 border-primary/20">
@@ -42,37 +47,38 @@ export const HorseRaceAnimation = ({ isActive, speed }: HorseRaceAnimationProps)
       {/* Racing track gradient */}
       <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-green-400/50 to-green-600/50" />
       
-      {/* Horse */}
+      {/* Horse - running from left to right */}
       <div 
-        className="absolute bottom-4 transition-all duration-100"
+        className="absolute bottom-6 transition-all duration-100"
         style={{ 
           left: `${position}%`,
-          transform: speed === 0 ? 'scale(1)' : 'scale(1.1)',
+          transform: `scale(${speed === 0 ? 1 : 1.1}) scaleX(-1)`,
         }}
       >
         <div className="relative">
           {/* Horse emoji with animation */}
           <div 
-            className="text-6xl"
+            className="text-6xl leading-none"
             style={{
               animation: speed > 0 
-                ? `gallop ${animationSpeed}s steps(2) infinite`
+                ? `gallop ${animationSpeed}s ease-in-out infinite`
                 : 'none',
-              filter: speed === 0 ? 'grayscale(50%)' : 'grayscale(0%)',
+              filter: speed === 0 ? 'grayscale(50%) opacity(0.7)' : 'grayscale(0%)',
             }}
           >
             🏇
           </div>
           
-          {/* Speed lines when fast */}
+          {/* Speed lines when fast - behind the horse */}
           {speed > 5 && (
-            <div className="absolute left-[-20px] top-1/2 -translate-y-1/2">
+            <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 transform scale-x-[-1]">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="h-1 bg-primary/40 rounded-full mb-2 animate-slide-out-right"
+                  className="h-1 bg-primary/40 rounded-full mb-2"
                   style={{
                     width: `${15 - i * 3}px`,
+                    animation: `speedLine 0.3s ease-out infinite`,
                     animationDelay: `${i * 0.1}s`,
                   }}
                 />
@@ -111,8 +117,12 @@ export const HorseRaceAnimation = ({ isActive, speed }: HorseRaceAnimationProps)
       
       <style>{`
         @keyframes gallop {
-          0%, 100% { transform: translateY(0px) rotate(-2deg); }
-          50% { transform: translateY(-8px) rotate(2deg); }
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes speedLine {
+          0% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 0; transform: translateX(-15px); }
         }
       `}</style>
     </div>
