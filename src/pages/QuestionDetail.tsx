@@ -186,7 +186,7 @@ const QuestionDetail = () => {
           <p className="text-muted-foreground mb-6">Most common words used in positive and negative feedback</p>
           
           <Tabs defaultValue="positive" className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="positive">Positive Feedback</TabsTrigger>
               <TabsTrigger value="negative">Negative Feedback</TabsTrigger>
             </TabsList>
