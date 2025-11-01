@@ -195,10 +195,6 @@ export function IdeationQuestion({
     }
 
     const totalXP = earnedXP + ideationScore;
-    toast.success(`+${totalXP} XP!`, {
-      description: evaluationReason,
-      icon: <Lightbulb className="h-4 w-4 text-accent" />,
-    });
     
     // Add XP and check for level up
     const xpResult = addXP(userProgress, totalXP);

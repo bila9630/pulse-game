@@ -259,9 +259,50 @@ const Homepage = () => {
     if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
     
+    // For open-ended questions, show word cloud results before moving to next question
+    if (currentQuestion.type === 'open-ended') {
+      setShowEvaluation(false);
+      setShowWordCloud(true);
+      return;
+    }
+    
     const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
     setAnsweredQuestions(newAnsweredQuestions);
     setShowEvaluation(false);
+    setEvaluationResult(null);
+    setUndoAvailable(false);
+    setOpenAnswer("");
+    
+    const nextQuestion = availableQuestions.find(
+      (q) => !newAnsweredQuestions.includes(q.id)
+    );
+    
+    setCurrentQuestion(nextQuestion || null);
+  };
+
+  const handleWordCloudClose = () => {
+    if (!currentQuestion) return;
+    
+    const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+    setAnsweredQuestions(newAnsweredQuestions);
+    setShowWordCloud(false);
+    setEvaluationResult(null);
+    setUndoAvailable(false);
+    setOpenAnswer("");
+    
+    const nextQuestion = availableQuestions.find(
+      (q) => !newAnsweredQuestions.includes(q.id)
+    );
+    
+    setCurrentQuestion(nextQuestion || null);
+  };
+
+  const handleWordCloudCancel = () => {
+    if (!currentQuestion) return;
+    
+    const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+    setAnsweredQuestions(newAnsweredQuestions);
+    setShowWordCloud(false);
     setEvaluationResult(null);
     setUndoAvailable(false);
     setOpenAnswer("");
@@ -334,13 +375,6 @@ const Homepage = () => {
         return;
       }
 
-      // Show subtle toast for XP
-      toast.success(`+${earnedXP} XP`, {
-        description: evaluationReason,
-        icon: <Star className="h-4 w-4 text-accent" />,
-        duration: 2000
-      });
-      
       // Add XP and check for level up
       const xpResult = addXP(userProgress, earnedXP);
       setUserProgress(xpResult.newProgress);
@@ -404,8 +438,8 @@ const Homepage = () => {
         }
       }
       
-      // In Play Mode, auto-advance after delay
-      if (viewMode === "play") {
+      // In Play Mode, auto-advance after delay (but not for open-ended questions)
+      if (viewMode === "play" && currentQuestion.type !== 'open-ended') {
         if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
         evaluationTimerRef.current = setTimeout(() => {
           handleNext();
@@ -439,11 +473,6 @@ const Homepage = () => {
         return;
       }
 
-      toast.success(`+${currentQuestion.xpReward} XP!`, {
-        description: "Ranking complete!",
-        icon: <Trophy className="h-4 w-4 text-accent" />,
-      });
-      
       // Add XP and check for level up
       const xpResult = addXP(userProgress, currentQuestion.xpReward);
       setUserProgress(xpResult.newProgress);
@@ -475,6 +504,18 @@ const Homepage = () => {
 
   const renderQuestionModal = () => {
     if (!currentQuestion || viewMode === "play") return null;
+    
+    // Show word cloud results for open-ended questions
+    if (showWordCloud && currentQuestion.type === 'open-ended') {
+      return (
+        <WordCloudResults
+          questionId={currentQuestion.id}
+          question={currentQuestion.question}
+          onClose={handleWordCloudClose}
+          onCancel={handleWordCloudCancel}
+        />
+      );
+    }
 
     return (
       <div 
@@ -655,6 +696,18 @@ const Homepage = () => {
 
   const renderPlayModeQuestion = () => {
     if (!currentQuestion || viewMode !== "play") return null;
+    
+    // Show word cloud results for open-ended questions
+    if (showWordCloud && currentQuestion.type === 'open-ended') {
+      return (
+        <WordCloudResults
+          questionId={currentQuestion.id}
+          question={currentQuestion.question}
+          onClose={handleWordCloudClose}
+          onCancel={handleWordCloudCancel}
+        />
+      );
+    }
 
     return (
       <Card className="p-8 shadow-2xl animate-scale-in border-2 border-primary/20">
