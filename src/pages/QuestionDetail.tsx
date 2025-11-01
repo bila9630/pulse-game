@@ -310,7 +310,7 @@ const QuestionDetail = () => {
               : 'text-destructive'
           }`}>
             <TrendingUp className="h-4 w-4 mr-1" />
-            {question.responseRate}% response rate
+            {question.responseRate.toFixed(1)}% response rate
           </span>
         </div>
       </div>
