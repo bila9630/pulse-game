@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Heart, AlertTriangle, Wrench, TrendingDown, TrendingUp, BarChart3, MessageSquare, ThumbsUp, ThumbsDown, Trophy, Lightbulb, CheckCircle2, XCircle, Gauge } from "lucide-react";
+import { ArrowLeft, Heart, AlertTriangle, Wrench, TrendingDown, TrendingUp, BarChart3, MessageSquare, ThumbsUp, ThumbsDown, Trophy, Lightbulb, CheckCircle2, XCircle, Gauge, Star } from "lucide-react";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import ReactWordcloud from "react-wordcloud";
 import { supabase } from "@/integrations/supabase/client";
@@ -550,40 +550,85 @@ const QuestionDetail = () => {
                     <Lightbulb className="mr-3 h-6 w-6 text-purple-600 dark:text-purple-400" />
                     Actionable Insights
                   </h2>
+                  <p className="text-sm text-muted-foreground mt-2">Prioritized solutions based on implementation complexity</p>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Easy Solutions */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-lg flex items-center">
-                      <Lightbulb className="h-5 w-5 mr-2 text-primary" />
-                      Easily Solvable
-                    </h3>
-                    <div className="space-y-2">
+                <div className="space-y-6">
+                  {/* Easy Solutions - Horizontal Cards */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                        <CheckCircle2 className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg text-green-700 dark:text-green-400">Quick Wins</h3>
+                        <p className="text-xs text-muted-foreground">Ready to implement immediately</p>
+                      </div>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-3">
                       {trendAnalysis.feasibilityAnalysis.easySolutions?.map((item: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-2 p-3 bg-primary/5 rounded-lg">
-                          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs flex-shrink-0">
-                            {idx + 1}
+                        <div 
+                          key={idx} 
+                          className="group relative p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-xl border-2 border-green-200 dark:border-green-800 hover:border-green-400 dark:hover:border-green-600 transition-all hover:shadow-lg hover:scale-[1.02]"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="h-7 w-7 rounded-lg bg-green-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-sm">
+                              {idx + 1}
+                            </div>
+                            <p className="text-sm font-medium text-foreground leading-relaxed pt-0.5">{item}</p>
                           </div>
-                          <p className="text-sm pt-0.5">{item}</p>
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Star className="h-4 w-4 text-green-500" />
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {/* Challenging Items */}
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-lg flex items-center">
-                      <AlertTriangle className="h-5 w-5 mr-2 text-accent" />
-                      More Challenging
-                    </h3>
-                    <div className="space-y-2">
+                  {/* Divider */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-purple-200 dark:border-purple-800"></div>
+                    </div>
+                    <div className="relative flex justify-center">
+                      <span className="bg-card px-4 text-xs text-muted-foreground uppercase tracking-wide">Requires Planning</span>
+                    </div>
+                  </div>
+
+                  {/* Challenging Items - Stacked Cards with Progress Indicators */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                        <AlertTriangle className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg text-amber-700 dark:text-amber-400">Strategic Initiatives</h3>
+                        <p className="text-xs text-muted-foreground">Long-term implementation required</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
                       {trendAnalysis.feasibilityAnalysis.challenges?.map((item: string, idx: number) => (
-                        <div key={idx} className="flex items-start gap-2 p-3 bg-accent/5 rounded-lg">
-                          <div className="h-6 w-6 rounded-full bg-accent/10 flex items-center justify-center text-accent font-semibold text-xs flex-shrink-0">
+                        <div 
+                          key={idx}
+                          className="relative pl-12 pr-4 py-4 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-amber-950/30 rounded-xl border-l-4 border-amber-400 dark:border-amber-600 hover:shadow-md transition-all"
+                        >
+                          <div className="absolute left-3 top-4 h-8 w-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
                             {idx + 1}
                           </div>
-                          <p className="text-sm pt-0.5">{item}</p>
+                          <div className="space-y-2">
+                            <p className="text-sm font-medium text-foreground leading-relaxed">{item}</p>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-1.5 bg-amber-200 dark:bg-amber-900 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full"
+                                  style={{ width: `${Math.max(20, 100 - (idx * 15))}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-xs text-muted-foreground font-medium">
+                                {idx === 0 ? 'Medium' : idx === 1 ? 'High' : 'Very High'} Complexity
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
