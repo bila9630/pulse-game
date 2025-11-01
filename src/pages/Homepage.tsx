@@ -85,7 +85,7 @@ const availableQuestions: Question[] = [
   {
     id: 7,
     type: "ideation",
-    question: "How to make meetings less boring?",
+    question: "Which benefits should Endres offer?",
     category: "Innovation",
     xpReward: 100,
     timeAgo: "1h ago",
