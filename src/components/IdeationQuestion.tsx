@@ -310,7 +310,7 @@ export function IdeationQuestion({
           </div>
         </div>
 
-        <HorseRaceAnimation isActive={ideationStarted} speed={horseSpeed} />
+        <HorseRaceAnimation isActive={ideationStarted} speed={horseSpeed} hasIdeas={ideationIdeas.length > 0} />
 
         <Progress value={(ideationTimeLeft / 60) * 100} className="h-2" />
 
@@ -319,8 +319,8 @@ export function IdeationQuestion({
             <AlertTriangle className="h-5 w-5 text-destructive" />
             <span className="text-sm font-medium text-destructive">
               {horseSpeed === 0
-                ? "⚠️ Horse stopped! Submit an idea to keep racing!"
-                : "⚠️ Horse is slowing down! Submit ideas quickly!"}
+                ? "Horse stopped! Submit an idea to keep racing!"
+                : "Horse is slowing down! Submit ideas quickly!"}
             </span>
           </div>
         )}
