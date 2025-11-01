@@ -160,12 +160,13 @@ const QuestionDetail = () => {
       const totalResponses = responsesData.length;
       const responseRate = totalResponses > 0 ? 100 : 0;
 
-      if (questionData.question_type === 'open-ended') {
-        // For open-ended questions, analyze trends
+      if (questionData.question_type === 'open-ended' || questionData.question_type === 'ideation') {
+        // For open-ended and ideation questions, analyze trends
+        const displayType = questionData.question_type === 'ideation' ? 'Ideation' : 'Open-ended';
         setRealQuestion({
           id: questionData.id,
           question: questionData.question_text,
-          type: 'Open-ended',
+          type: displayType,
           totalResponses,
           responseRate,
           responses: [],
@@ -238,6 +239,8 @@ const QuestionDetail = () => {
           question: questionData.question_text,
           type: questionData.question_type === 'multiple-choice' ? 'Multiple Choice' : 
                 questionData.question_type === 'yes-no' ? 'Yes/No' : 
+                questionData.question_type === 'ranking' ? 'Ranking' :
+                questionData.question_type === 'ideation' ? 'Ideation' :
                 'Open-ended',
           totalResponses,
           responseRate,
@@ -435,8 +438,8 @@ const QuestionDetail = () => {
 
       </div>
 
-      {/* Trend Analysis for Open-ended Questions */}
-      {question.type === "Open-ended" && trendAnalysis && (
+      {/* Trend Analysis for Open-ended and Ideation Questions */}
+      {(question.type === "Open-ended" || question.type === "Ideation") && trendAnalysis && (
         <>
           <Card className="p-6 mb-8 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-2 border-purple-500/20">
             <h2 className="text-2xl font-semibold mb-4 flex items-center">
