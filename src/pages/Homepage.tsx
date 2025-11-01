@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +49,8 @@ const Homepage = () => {
   const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
   const [showChallengeSurface, setShowChallengeSurface] = useState(true);
   const [viewMode, setViewMode] = useState<"list" | "play">("play");
+  const [scrollToQuestionId, setScrollToQuestionId] = useState<string | null>(null);
+  const questionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   
   // Ranking game state
   const [rankingStarted, setRankingStarted] = useState(false);
@@ -144,6 +146,19 @@ const Homepage = () => {
     }
   }, [viewMode, currentQuestion, availableQuestions, answeredQuestions, showChallengeSurface]);
 
+  // Scroll to question when switching to list view
+  useEffect(() => {
+    if (viewMode === "list" && scrollToQuestionId && questionRefs.current[scrollToQuestionId]) {
+      setTimeout(() => {
+        questionRefs.current[scrollToQuestionId]?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        setScrollToQuestionId(null);
+      }, 100);
+    }
+  }, [viewMode, scrollToQuestionId]);
+
   const handleStartQuestion = (question: Question) => {
     setCurrentQuestion(question);
   };
@@ -164,9 +179,22 @@ const Homepage = () => {
   };
 
   const handleExitPlayMode = () => {
+    const currentQuestionId = currentQuestion?.id || null;
     setCurrentQuestion(null);
     setViewMode("list");
+    if (currentQuestionId) {
+      setScrollToQuestionId(currentQuestionId);
+    }
     toast.info("Exited Play Mode");
+  };
+
+  const handleSwitchToListView = () => {
+    const currentQuestionId = currentQuestion?.id || null;
+    setCurrentQuestion(null);
+    setViewMode("list");
+    if (currentQuestionId) {
+      setScrollToQuestionId(currentQuestionId);
+    }
   };
 
   const handleAnswer = async (answer: string) => {
@@ -693,7 +721,7 @@ const Homepage = () => {
               <Button
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
-                onClick={() => setViewMode("list")}
+                onClick={handleSwitchToListView}
                 className="gap-2"
               >
                 <List className="h-4 w-4" />
@@ -735,6 +763,9 @@ const Homepage = () => {
                 filteredQuestions.map((question, index) => (
                   <Card
                     key={question.id}
+                    ref={(el) => {
+                      questionRefs.current[question.id] = el;
+                    }}
                     className="p-6 shadow-md hover:shadow-xl transition-all cursor-pointer animate-fade-in hover:scale-[1.02] border-2 border-transparent hover:border-primary/20"
                     style={{ animationDelay: `${index * 0.1}s` }}
                     onClick={() => handleStartQuestion(question)}
