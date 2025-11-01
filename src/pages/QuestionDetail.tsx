@@ -290,48 +290,23 @@ const QuestionDetail = () => {
       {question.wordCloud && (
         <Card className="p-6 mb-8">
           <h2 className="text-2xl font-semibold mb-2">Feedback Word Analysis</h2>
-          <p className="text-muted-foreground mb-6">Most common words used in positive and negative feedback</p>
+          <p className="text-muted-foreground mb-6">Most common words used in feedback responses</p>
           
-          <Tabs defaultValue="positive" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="positive">Positive Feedback</TabsTrigger>
-              <TabsTrigger value="negative">Negative Feedback</TabsTrigger>
-            </TabsList>
-            <TabsContent value="positive" className="mt-0">
-              <div className="h-[400px] flex items-center justify-center">
-                <ReactWordcloud
-                  words={question.wordCloud.positive}
-                  options={{
-                    rotations: 2,
-                    rotationAngles: [0, 0],
-                    fontSizes: [16, 60],
-                    colors: ["hsl(var(--success))"],
-                    enableTooltip: true,
-                    deterministic: true,
-                    fontFamily: "inherit",
-                    padding: 2,
-                  }}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="negative" className="mt-0">
-              <div className="h-[400px] flex items-center justify-center">
-                <ReactWordcloud
-                  words={question.wordCloud.negative}
-                  options={{
-                    rotations: 2,
-                    rotationAngles: [0, 0],
-                    fontSizes: [16, 60],
-                    colors: ["hsl(var(--destructive))"],
-                    enableTooltip: true,
-                    deterministic: true,
-                    fontFamily: "inherit",
-                    padding: 2,
-                  }}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
+          <div className="h-[400px] flex items-center justify-center">
+            <ReactWordcloud
+              words={[...question.wordCloud.positive, ...question.wordCloud.negative]}
+              options={{
+                rotations: 2,
+                rotationAngles: [0, 0],
+                fontSizes: [16, 60],
+                colors: ["hsl(var(--primary))", "hsl(var(--accent))", "hsl(var(--secondary))"],
+                enableTooltip: true,
+                deterministic: true,
+                fontFamily: "inherit",
+                padding: 2,
+              }}
+            />
+          </div>
         </Card>
       )}
 
