@@ -242,6 +242,64 @@ const QuestionDetail = () => {
             setAnalyzingTrends(false);
           }
         }
+      } else if (questionData.question_type === 'ranking') {
+        // For ranking questions, calculate aggregate rankings
+        const rankingScores: { [key: string]: { total: number; count: number; firstPlaceCount: number } } = {};
+        
+        // Parse all ranking responses
+        responsesData.forEach((response) => {
+          if (response.response_text) {
+            // Parse format: "1. Donuts 🍩, 2. Cookies 🍪, ..."
+            const rankings = response.response_text.split(', ').map(item => {
+              const match = item.match(/^\d+\.\s*(.+)$/);
+              return match ? match[1] : null;
+            }).filter(Boolean);
+            
+            rankings.forEach((item, index) => {
+              if (item) {
+                if (!rankingScores[item]) {
+                  rankingScores[item] = { total: 0, count: 0, firstPlaceCount: 0 };
+                }
+                rankingScores[item].total += (index + 1); // Position (1-based)
+                rankingScores[item].count++;
+                if (index === 0) {
+                  rankingScores[item].firstPlaceCount++;
+                }
+              }
+            });
+          }
+        });
+        
+        // Calculate averages and sort by first place count (then by average position)
+        const finalRanking = Object.entries(rankingScores)
+          .map(([name, scores]) => ({
+            name,
+            wins: scores.firstPlaceCount,
+            avgPosition: scores.total / scores.count,
+            fill: "hsl(var(--primary))"
+          }))
+          .sort((a, b) => {
+            if (b.wins !== a.wins) return b.wins - a.wins; // More #1 rankings first
+            return a.avgPosition - b.avgPosition; // Lower average position is better
+          });
+        
+        // Assign colors based on ranking
+        if (finalRanking.length > 0) {
+          finalRanking[0].fill = "hsl(var(--success))";
+          if (finalRanking.length > 1) finalRanking[1].fill = "hsl(var(--primary))";
+          if (finalRanking.length > 2) finalRanking[2].fill = "hsl(var(--accent))";
+          if (finalRanking.length > 3) finalRanking[3].fill = "hsl(var(--muted))";
+          if (finalRanking.length > 4) finalRanking[4].fill = "hsl(var(--muted-foreground))";
+        }
+        
+        setRealQuestion({
+          id: questionData.id,
+          question: questionData.question_text,
+          type: 'Ranking',
+          totalResponses,
+          responseRate,
+          finalRanking,
+        });
       } else {
         // For multiple choice / yes-no questions
         // For yes-no questions, use hardcoded options if not in database
