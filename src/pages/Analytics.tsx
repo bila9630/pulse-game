@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BarChart3, MessageSquare, ThumbsUp, ThumbsDown, TrendingUp } from "lucide-react";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
@@ -81,15 +82,19 @@ const Analytics = () => {
       </div>
 
       {/* Questions List */}
-      <div className="space-y-8">
+      <Accordion type="single" collapsible className="space-y-4">
         {questionsData.map((question, index) => (
-          <Card key={question.id} className="p-6 shadow-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-            {/* Question Header */}
-            <div className="mb-6">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2">{question.question}</h3>
-                  <div className="flex items-center gap-3">
+          <AccordionItem 
+            key={question.id} 
+            value={`question-${question.id}`}
+            className="border rounded-lg shadow-md bg-card animate-fade-in"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <AccordionTrigger className="px-6 py-4 hover:no-underline">
+              <div className="flex items-start justify-between w-full pr-4">
+                <div className="flex-1 text-left">
+                  <h3 className="text-lg font-semibold mb-2">{question.question}</h3>
+                  <div className="flex items-center gap-3 flex-wrap">
                     <Badge variant="outline">{question.type}</Badge>
                     <span className="text-sm text-muted-foreground">
                       {question.totalResponses} responses
@@ -101,85 +106,33 @@ const Analytics = () => {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Analytics Content */}
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Chart Section */}
-              {(question.type === "Multiple Choice" || question.type === "Yes/No") && (
-                <div>
-                  <h4 className="text-lg font-semibold mb-4 flex items-center">
-                    <BarChart3 className="mr-2 h-5 w-5 text-primary" />
-                    Response Distribution
-                  </h4>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={question.responses}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        dataKey="value"
-                      >
-                        {question.responses.map((entry, idx) => (
-                          <Cell key={`cell-${idx}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: "hsl(var(--card))", 
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px"
-                        }} 
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-
-              {/* Stats/Details Section */}
-              <div>
-                <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
-                <div className="space-y-3">
-                  {question.responses?.map((response, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="h-3 w-3 rounded-full" 
-                          style={{ backgroundColor: response.fill }}
-                        />
-                        <span className="font-medium">{response.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-lg">{response.value}</span>
-                        <span className="text-muted-foreground text-sm ml-2">
-                          ({((response.value / question.totalResponses) * 100).toFixed(1)}%)
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sentiment Analysis for Open-ended */}
-              {question.type === "Open-ended" && question.sentiment && (
-                <>
+            </AccordionTrigger>
+            
+            <AccordionContent className="px-6 pb-6">
+              {/* Analytics Content */}
+              <div className="grid lg:grid-cols-2 gap-6 pt-4">
+                {/* Chart Section */}
+                {(question.type === "Multiple Choice" || question.type === "Yes/No") && (
                   <div>
                     <h4 className="text-lg font-semibold mb-4 flex items-center">
-                      <MessageSquare className="mr-2 h-5 w-5 text-primary" />
-                      Sentiment Analysis
+                      <BarChart3 className="mr-2 h-5 w-5 text-primary" />
+                      Response Distribution
                     </h4>
                     <ResponsiveContainer width="100%" height={250}>
-                      <BarChart data={[
-                        { name: "Positive", value: question.sentiment.positive, fill: "hsl(var(--success))" },
-                        { name: "Neutral", value: question.sentiment.neutral, fill: "hsl(var(--accent))" },
-                        { name: "Negative", value: question.sentiment.negative, fill: "hsl(var(--destructive))" },
-                      ]}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                        <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
-                        <YAxis stroke="hsl(var(--muted-foreground))" />
+                      <PieChart>
+                        <Pie
+                          data={question.responses}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          dataKey="value"
+                        >
+                          {question.responses.map((entry, idx) => (
+                            <Cell key={`cell-${idx}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: "hsl(var(--card))", 
@@ -187,56 +140,110 @@ const Analytics = () => {
                             borderRadius: "8px"
                           }} 
                         />
-                        <Bar dataKey="value" fill="fill" radius={[8, 8, 0, 0]}>
-                          {[
-                            { fill: "hsl(var(--success))" },
-                            { fill: "hsl(var(--accent))" },
-                            { fill: "hsl(var(--destructive))" },
-                          ].map((entry, idx) => (
-                            <Cell key={`cell-${idx}`} fill={entry.fill} />
-                          ))}
-                        </Bar>
-                      </BarChart>
+                      </PieChart>
                     </ResponsiveContainer>
                   </div>
+                )}
 
-                  <div>
-                    <h4 className="text-lg font-semibold mb-4">Recent Feedback</h4>
-                    <div className="space-y-3">
-                      {question.recentFeedback?.map((feedback, idx) => (
-                        <div
-                          key={idx}
-                          className="p-3 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
-                        >
-                          <p className="mb-2 text-sm">{feedback.text}</p>
-                          <div className="flex items-center justify-between text-xs text-muted-foreground">
-                            <Badge 
-                              variant={feedback.sentiment === "positive" ? "default" : "outline"}
-                              className={
-                                feedback.sentiment === "positive" 
-                                  ? "bg-success/10 text-success hover:bg-success/20" 
-                                  : "bg-accent/10 text-accent"
-                              }
-                            >
-                              {feedback.sentiment === "positive" ? (
-                                <ThumbsUp className="h-3 w-3 mr-1" />
-                              ) : (
-                                <ThumbsDown className="h-3 w-3 mr-1" />
-                              )}
-                              {feedback.sentiment}
-                            </Badge>
-                            <span>{feedback.time}</span>
-                          </div>
+                {/* Stats/Details Section */}
+                <div>
+                  <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
+                  <div className="space-y-3">
+                    {question.responses?.map((response, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div 
+                            className="h-3 w-3 rounded-full" 
+                            style={{ backgroundColor: response.fill }}
+                          />
+                          <span className="font-medium">{response.name}</span>
                         </div>
-                      ))}
-                    </div>
+                        <div className="text-right">
+                          <span className="font-bold text-lg">{response.value}</span>
+                          <span className="text-muted-foreground text-sm ml-2">
+                            ({((response.value / question.totalResponses) * 100).toFixed(1)}%)
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </>
-              )}
-            </div>
-          </Card>
+                </div>
+
+                {/* Sentiment Analysis for Open-ended */}
+                {question.type === "Open-ended" && question.sentiment && (
+                  <>
+                    <div>
+                      <h4 className="text-lg font-semibold mb-4 flex items-center">
+                        <MessageSquare className="mr-2 h-5 w-5 text-primary" />
+                        Sentiment Analysis
+                      </h4>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <BarChart data={[
+                          { name: "Positive", value: question.sentiment.positive, fill: "hsl(var(--success))" },
+                          { name: "Neutral", value: question.sentiment.neutral, fill: "hsl(var(--accent))" },
+                          { name: "Negative", value: question.sentiment.negative, fill: "hsl(var(--destructive))" },
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                          <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
+                          <YAxis stroke="hsl(var(--muted-foreground))" />
+                          <Tooltip 
+                            contentStyle={{ 
+                              backgroundColor: "hsl(var(--card))", 
+                              border: "1px solid hsl(var(--border))",
+                              borderRadius: "8px"
+                            }} 
+                          />
+                          <Bar dataKey="value" fill="fill" radius={[8, 8, 0, 0]}>
+                            {[
+                              { fill: "hsl(var(--success))" },
+                              { fill: "hsl(var(--accent))" },
+                              { fill: "hsl(var(--destructive))" },
+                            ].map((entry, idx) => (
+                              <Cell key={`cell-${idx}`} fill={entry.fill} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    <div>
+                      <h4 className="text-lg font-semibold mb-4">Recent Feedback</h4>
+                      <div className="space-y-3">
+                        {question.recentFeedback?.map((feedback, idx) => (
+                          <div
+                            key={idx}
+                            className="p-3 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
+                          >
+                            <p className="mb-2 text-sm">{feedback.text}</p>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <Badge 
+                                variant={feedback.sentiment === "positive" ? "default" : "outline"}
+                                className={
+                                  feedback.sentiment === "positive" 
+                                    ? "bg-success/10 text-success hover:bg-success/20" 
+                                    : "bg-accent/10 text-accent"
+                                }
+                              >
+                                {feedback.sentiment === "positive" ? (
+                                  <ThumbsUp className="h-3 w-3 mr-1" />
+                                ) : (
+                                  <ThumbsDown className="h-3 w-3 mr-1" />
+                                )}
+                                {feedback.sentiment}
+                              </Badge>
+                              <span>{feedback.time}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </div>
   );
 };
