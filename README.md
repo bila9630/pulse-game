@@ -70,6 +70,74 @@ Pulse Game revolutionizes how organizations collect and analyze employee feedbac
 - Track personal progress and statistics
 - Profile customization and history
 
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        UI[React Components<br/>shadcn/ui + Tailwind CSS]
+        Router[React Router v6]
+        State[TanStack Query<br/>State Management]
+        Forms[React Hook Form<br/>+ Zod Validation]
+    end
+    
+    subgraph "Lovable Cloud Backend"
+        DB[(PostgreSQL Database<br/>Questions, Responses, Progress)]
+        Auth[Authentication<br/>User Management]
+        Storage[File Storage<br/>Audio/Images]
+        RLS[Row Level Security<br/>Access Policies]
+    end
+    
+    subgraph "Edge Functions"
+        Trends[analyze-trends]
+        Evaluate[evaluate-response]
+        Keywords[extract-keypoints]
+        Transcribe[transcribe-audio]
+    end
+    
+    subgraph "AI Services"
+        LovableAI[Lovable AI<br/>Gemini & GPT Models]
+    end
+    
+    subgraph "Visualization"
+        Charts[Recharts<br/>Analytics]
+        WordCloud[React Word Cloud<br/>Ideation Results]
+        DnD[DND Kit<br/>Ranking Interface]
+    end
+    
+    UI --> Router
+    UI --> Forms
+    Router --> State
+    Forms --> State
+    State --> DB
+    State --> Auth
+    State --> Storage
+    State --> Trends
+    State --> Evaluate
+    State --> Keywords
+    State --> Transcribe
+    
+    Trends --> LovableAI
+    Evaluate --> LovableAI
+    Keywords --> LovableAI
+    Transcribe --> LovableAI
+    
+    DB --> RLS
+    Auth --> RLS
+    Storage --> RLS
+    
+    UI --> Charts
+    UI --> WordCloud
+    UI --> DnD
+    
+    style UI fill:#8b5cf6
+    style DB fill:#10b981
+    style Auth fill:#10b981
+    style Storage fill:#10b981
+    style LovableAI fill:#f59e0b
+    style RLS fill:#ef4444
+```
+
 ## 🛠️ Technology Stack
 
 ### Frontend
