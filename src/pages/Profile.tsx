@@ -4,13 +4,42 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Star, TrendingUp, Award, Calendar, Zap, Target, Crown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { loadProgress, getXPForLevel, UserProgress } from "@/lib/xpSystem";
 
 const Profile = () => {
+  const [userProgress, setUserProgress] = useState<UserProgress>(loadProgress());
+
+  useEffect(() => {
+    // Reload progress when component mounts
+    setUserProgress(loadProgress());
+
+    // Listen for XP updates
+    const handleXPUpdate = () => {
+      setUserProgress(loadProgress());
+    };
+
+    window.addEventListener('xpUpdated', handleXPUpdate);
+
+    // Poll every 2 seconds as fallback
+    const interval = setInterval(() => {
+      setUserProgress(loadProgress());
+    }, 2000);
+
+    return () => {
+      window.removeEventListener('xpUpdated', handleXPUpdate);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const xpForNextLevel = getXPForLevel(userProgress.level);
+  const xpProgress = (userProgress.currentXP / xpForNextLevel) * 100;
+
   const userStats = {
     name: "Jane Doe",
-    level: 5,
-    xp: 850,
-    xpToNextLevel: 1000,
+    level: userProgress.level,
+    xp: userProgress.currentXP,
+    xpToNextLevel: xpForNextLevel,
     totalResponses: 47,
     streak: 12,
     achievements: 8,
@@ -33,8 +62,6 @@ const Profile = () => {
     { date: "2 days ago", action: "Provided detailed feedback", xp: 75 },
     { date: "3 days ago", action: "Completed team collaboration survey", xp: 50 },
   ];
-
-  const xpProgress = (userStats.xp / userStats.xpToNextLevel) * 100;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
