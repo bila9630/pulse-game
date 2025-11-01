@@ -10,6 +10,7 @@ import { Star, TrendingUp, Clock, ThumbsUp, ThumbsDown, ChevronRight, Flame, Tro
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HorseRaceAnimation } from "@/components/HorseRaceAnimation";
+import { WordCloudResults } from "@/components/WordCloudResults";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   UserProgress, 
@@ -69,6 +70,9 @@ const Homepage = () => {
   // Vote distribution state
   const [showVoteDistribution, setShowVoteDistribution] = useState(false);
   const [voteDistribution, setVoteDistribution] = useState<{ option: string; count: number; percentage: number }[]>([]);
+  
+  // Word cloud state for open-ended questions
+  const [showWordCloud, setShowWordCloud] = useState(false);
 
   // XP and leveling state
   const [userProgress, setUserProgress] = useState<UserProgress>(loadProgress());
@@ -239,6 +243,9 @@ const Homepage = () => {
           setVoteDistribution(distribution);
           setShowVoteDistribution(true);
         }
+      } else if (currentQuestion.type === 'open-ended') {
+        // For open-ended questions, show word cloud
+        setShowWordCloud(true);
       } else {
         // For other question types, move to next immediately
         const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
@@ -1169,6 +1176,26 @@ const Homepage = () => {
       </Tabs>
 
       {renderQuestionModal()}
+      
+      {/* Word Cloud Modal for Open-Ended Questions */}
+      {showWordCloud && currentQuestion && (
+        <WordCloudResults
+          questionId={currentQuestion.id}
+          question={currentQuestion.question}
+          onClose={() => {
+            setShowWordCloud(false);
+            const newAnsweredQuestions = [...answeredQuestions, currentQuestion.id];
+            setAnsweredQuestions(newAnsweredQuestions);
+            setOpenAnswer("");
+            
+            const nextQuestion = availableQuestions.find(
+              (q) => !newAnsweredQuestions.includes(q.id)
+            );
+            
+            setCurrentQuestion(nextQuestion || null);
+          }}
+        />
+      )}
       
       {/* Vote Distribution Modal */}
       {showVoteDistribution && currentQuestion && (

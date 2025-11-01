@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      keypoint_likes: {
+        Row: {
+          created_at: string
+          id: string
+          keypoint_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          keypoint_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          keypoint_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "keypoint_likes_keypoint_id_fkey"
+            columns: ["keypoint_id"]
+            isOneToOne: false
+            referencedRelation: "response_keypoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           category: string
@@ -43,6 +72,35 @@ export type Database = {
           xp_reward?: number | null
         }
         Relationships: []
+      }
+      response_keypoints: {
+        Row: {
+          created_at: string
+          id: string
+          keypoint: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          keypoint: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          keypoint?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "response_keypoints_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_responses: {
         Row: {
