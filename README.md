@@ -1,73 +1,264 @@
-# Welcome to your Lovable project
+# Pulse Game 🎮
 
-## Project info
+A gamified employee feedback platform that transforms organizational feedback into an engaging experience through game mechanics, AI-powered insights, and competitive elements.
 
-**URL**: https://lovable.dev/projects/7c0ec0aa-73df-4cac-af3a-0db9dc1c5d16
+[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
+[![React](https://img.shields.io/badge/React-18.3-blue)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38bdf8)](https://tailwindcss.com/)
 
-## How can I edit this code?
+## 🌟 Overview
 
-There are several ways of editing your application.
+Pulse Game revolutionizes how organizations collect and analyze employee feedback by gamifying the entire experience. Users engage with daily questions, earn XP, level up, and compete on leaderboards—all while providing valuable insights to their organization.
 
-**Use Lovable**
+**Live Demo:** [View Project](https://lovable.dev/projects/7c0ec0aa-73df-4cac-af3a-0db9dc1c5d16)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7c0ec0aa-73df-4cac-af3a-0db9dc1c5d16) and start prompting.
+## ✨ Key Features
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🎯 Gamification System
+- **XP & Leveling**: Earn experience points for each response, with progressive leveling that unlocks rewards
+- **Daily Streaks**: Maintain consecutive days of participation with visual streak tracking
+- **Leaderboards**: Compete with peers through relative rankings and global standings
+- **Level Rewards**: Unlock achievements, badges, and perks as you progress
+- **Horse Race Animation**: Dynamic visual feedback celebrating engagement
 
-**Use your preferred IDE**
+### 💬 Multi-Format Questions
+- **Multiple Choice**: Quick polls with vote distribution visualization
+- **Open-Ended**: Free-form text responses with AI-powered sentiment analysis
+- **Ranking**: Drag-and-drop prioritization with animated result comparisons
+- **Yes/No**: Binary questions for quick pulse checks
+- **Ideation**: Creative brainstorming with word cloud visualizations
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🤖 AI-Powered Insights
+- **Response Evaluation**: Automated assessment of open-ended answers
+- **Sentiment Analysis**: Understanding emotional context in feedback
+- **Trend Detection**: Identifying patterns across responses
+- **Keyword Extraction**: Highlighting key themes from feedback
+- **Audio Transcription**: Voice-to-text for spoken responses
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 📊 Analytics & Visualization
+- **Question Analytics**: Track participation rates, response patterns, and engagement
+- **Word Clouds**: Visual representation of collective thoughts
+- **Vote Distribution**: Real-time polling results with animated charts
+- **Ranking Results**: Comparative analysis of priority preferences
+- **Trend Reports**: Historical data and pattern identification
 
-Follow these steps:
+### 🎁 Rewards & Achievements
+- Progressive reward system tied to user levels
+- Unlockable features and capabilities
+- Achievement badges and milestones
+- Visual celebration of accomplishments
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 🎨 User Experience
+- **Play Mode**: Immersive full-screen question experience
+- **List View**: Browse and filter available questions
+- **Undo Functionality**: Revise recent responses within time limits
+- **Search & Filter**: Find questions by category or type
+- **Responsive Design**: Seamless mobile and desktop experiences
+- **Dark Mode**: Comfortable viewing in any lighting condition
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 👥 Social Features
+- Propose new questions to the organization
+- View relative positioning on leaderboards
+- Track personal progress and statistics
+- Profile customization and history
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🛠️ Technology Stack
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Frontend
+- **React 18** - Modern UI library with hooks
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and dev server
+- **Tailwind CSS** - Utility-first styling
+- **shadcn/ui** - Customizable component library
+- **TanStack Query** - Server state management
+- **React Router v6** - Client-side routing
+- **React Hook Form** - Form handling
+- **Zod** - Schema validation
+- **Recharts** - Data visualization
+- **React Word Cloud** - Word cloud generation
+- **DND Kit** - Drag-and-drop functionality
+
+### Backend (Lovable Cloud)
+- **Supabase** - PostgreSQL database
+- **Row Level Security** - Data access policies
+- **Edge Functions** - Serverless compute
+- **Real-time Subscriptions** - Live data updates
+- **Authentication** - User management
+
+### AI Integration
+- **Lovable AI** - Built-in AI capabilities
+- Sentiment analysis and evaluation
+- Trend detection and insights
+- Audio transcription services
+
+## 📁 Project Structure
+
+```
+pulse-game/
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   ├── ui/             # shadcn/ui primitives
+│   │   ├── AppSidebar.tsx  # Main navigation
+│   │   ├── BottomNav.tsx   # Mobile navigation
+│   │   └── ...             # Feature components
+│   ├── pages/              # Route components
+│   │   ├── Homepage.tsx    # Main dashboard
+│   │   ├── QuestionDetail.tsx
+│   │   ├── Analytics.tsx
+│   │   ├── Profile.tsx
+│   │   ├── Rewards.tsx
+│   │   └── Trees.tsx
+│   ├── lib/                # Utility functions
+│   │   ├── xpSystem.ts     # XP & leveling logic
+│   │   └── utils.ts        # Helper functions
+│   ├── hooks/              # Custom React hooks
+│   ├── integrations/       # External services
+│   │   └── supabase/       # Database client
+│   └── assets/             # Static files
+├── supabase/
+│   ├── functions/          # Edge functions
+│   │   ├── analyze-trends/
+│   │   ├── evaluate-response/
+│   │   ├── extract-keypoints/
+│   │   └── transcribe-audio/
+│   └── migrations/         # Database schema
+└── public/                 # Public assets
 ```
 
-**Edit a file directly in GitHub**
+## 🚀 Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
+- Node.js 18+ and npm
+- Git
 
-**Use GitHub Codespaces**
+### Installation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Clone the repository**
+   ```bash
+   git clone <YOUR_GIT_URL>
+   cd pulse-game
+   ```
 
-## What technologies are used for this project?
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-This project is built with:
+3. **Environment Setup**
+   
+   The project uses Lovable Cloud, which automatically configures Supabase connection. Environment variables are pre-configured in `.env`:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - `VITE_SUPABASE_PROJECT_ID`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-## How can I deploy this project?
+5. **Open your browser**
+   
+   Navigate to `http://localhost:5173`
 
-Simply open [Lovable](https://lovable.dev/projects/7c0ec0aa-73df-4cac-af3a-0db9dc1c5d16) and click on Share -> Publish.
+### Available Scripts
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
 
-Yes, you can!
+## 📊 Database Schema
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Core Tables
+- **questions** - Question content and metadata
+- **responses** - User answers and engagement
+- **user_progress** - XP, levels, and achievements
+- **leaderboard** - Ranking and competition data
+- **proposed_questions** - Community suggestions
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Edge Functions
+- **analyze-trends** - Pattern detection across responses
+- **evaluate-response** - AI-powered answer assessment
+- **extract-keypoints** - Theme identification
+- **transcribe-audio** - Voice response processing
+
+## 🎨 Design System
+
+The project uses a comprehensive design system built on:
+- Semantic color tokens defined in `index.css`
+- Customized shadcn/ui components
+- Responsive breakpoints for mobile/desktop
+- Dark mode support throughout
+- Consistent spacing and typography scales
+
+## 📱 Responsive Design
+
+- **Desktop**: Full sidebar navigation, expanded analytics
+- **Mobile**: Bottom navigation bar, optimized layouts
+- **Tablet**: Adaptive interface with smart breakpoints
+
+## 🔐 Security
+
+- Row Level Security (RLS) policies on all tables
+- Authenticated API routes
+- Secure edge function execution
+- Environment variable protection
+
+## 🚢 Deployment
+
+### Via Lovable
+1. Click the **Publish** button in the Lovable editor
+2. Your app is instantly deployed with a staging URL
+3. Connect a custom domain in Project Settings
+
+### Via GitHub
+1. Connect your GitHub account in Lovable
+2. Push changes sync automatically
+3. Deploy to your preferred hosting platform (Vercel, Netlify, etc.)
+
+## 🤝 Contributing
+
+This project is built with [Lovable](https://lovable.dev), which provides:
+- Real-time preview of changes
+- AI-assisted development
+- Automatic deployment
+- Version history and rollback
+
+To contribute:
+1. Make changes in Lovable or via Git
+2. Test thoroughly in preview mode
+3. Commit with descriptive messages
+4. Deploy when ready
+
+## 📝 License
+
+This project was created with Lovable and follows standard web application licensing.
+
+## 🔗 Links
+
+- [Lovable Project Dashboard](https://lovable.dev/projects/7c0ec0aa-73df-4cac-af3a-0db9dc1c5d16)
+- [Lovable Documentation](https://docs.lovable.dev/)
+- [GitHub Repository](https://github.com/your-repo)
+
+## 💡 Use Cases
+
+- **Employee Engagement**: Transform surveys into interactive experiences
+- **Organizational Feedback**: Collect insights in a non-intrusive way
+- **Team Building**: Foster healthy competition through leaderboards
+- **Continuous Improvement**: Track sentiment and trends over time
+- **Innovation**: Crowdsource ideas through ideation questions
+
+## 🙏 Acknowledgments
+
+Built with ❤️ using:
+- [Lovable](https://lovable.dev) - AI-powered development platform
+- [Supabase](https://supabase.com) - Backend infrastructure
+- [shadcn/ui](https://ui.shadcn.com) - Component library
+- [Tailwind CSS](https://tailwindcss.com) - Styling framework
+
+---
+
+**Ready to transform your feedback process?** Get started with Pulse Game today! 🚀
