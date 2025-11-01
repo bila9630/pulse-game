@@ -195,11 +195,6 @@ export const WordCloudResults = ({ questionId, question, onClose, onCancel }: Wo
                       >
                         <div className="flex-1 flex items-center gap-2">
                           <span className="font-medium">{keypoint.text}</span>
-                          {keypoint.count && keypoint.count > 1 && (
-                            <Badge variant="outline" className="text-xs">
-                              {keypoint.count}x
-                            </Badge>
-                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           {keypoint.likes > 0 && (
