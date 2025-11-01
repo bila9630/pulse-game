@@ -105,6 +105,39 @@ export type Database = {
           },
         ]
       }
+      user_progress: {
+        Row: {
+          created_at: string | null
+          current_xp: number
+          id: string
+          level: number
+          total_xp: number
+          updated_at: string | null
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_xp?: number
+          id?: string
+          level?: number
+          total_xp?: number
+          updated_at?: string | null
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          current_xp?: number
+          id?: string
+          level?: number
+          total_xp?: number
+          updated_at?: string | null
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       user_responses: {
         Row: {
           created_at: string | null

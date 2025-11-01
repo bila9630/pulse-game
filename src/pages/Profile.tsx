@@ -6,12 +6,44 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Star, TrendingUp, Award, Calendar, Zap, Target, Crown, Lock } from "lucide-react";
 import { loadProgress, getUnlockedRewards, getLevelRewards, getXPForLevel } from "@/lib/xpSystem";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface LeaderboardUser {
+  id: string;
+  username: string;
+  level: number;
+  total_xp: number;
+  current_xp: number;
+}
 
 const Profile = () => {
   const [userProgress, setUserProgress] = useState(loadProgress());
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
   
   useEffect(() => {
     setUserProgress(loadProgress());
+  }, []);
+
+  // Fetch leaderboard data
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      setIsLoadingLeaderboard(true);
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('*')
+        .order('total_xp', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error('Error fetching leaderboard:', error);
+      } else if (data) {
+        setLeaderboardData(data);
+      }
+      setIsLoadingLeaderboard(false);
+    };
+
+    fetchLeaderboard();
   }, []);
 
   const unlockedRewards = getUnlockedRewards(userProgress.level);
@@ -99,12 +131,100 @@ const Profile = () => {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="achievements" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 max-w-md">
+      <Tabs defaultValue="leaderboard" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
           <TabsTrigger value="achievements">Achievements</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="stats">Stats</TabsTrigger>
         </TabsList>
+
+        {/* Leaderboard Tab */}
+        <TabsContent value="leaderboard" className="space-y-4">
+          <Card className="p-6 shadow-lg">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                <Trophy className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold">Global Leaderboard</h3>
+                <p className="text-sm text-muted-foreground">Top performers ranked by total XP</p>
+              </div>
+            </div>
+
+            {isLoadingLeaderboard ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Loading leaderboard...</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {leaderboardData.map((user, index) => {
+                  const rank = index + 1;
+                  const isTopThree = rank <= 3;
+                  const medalColors = {
+                    1: "text-yellow-500",
+                    2: "text-gray-400",
+                    3: "text-amber-600"
+                  };
+
+                  return (
+                    <div
+                      key={user.id}
+                      className={`flex items-center gap-4 p-4 rounded-lg transition-all animate-fade-in ${
+                        isTopThree
+                          ? "bg-gradient-to-r from-primary/10 to-accent/10 border-2 border-primary/20 hover:border-primary/40"
+                          : "bg-muted/30 hover:bg-muted/50"
+                      }`}
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
+                      {/* Rank */}
+                      <div className="flex items-center justify-center w-12 h-12 flex-shrink-0">
+                        {isTopThree ? (
+                          <Crown className={`h-8 w-8 ${medalColors[rank as 1 | 2 | 3]}`} />
+                        ) : (
+                          <div className="text-2xl font-bold text-muted-foreground">
+                            {rank}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* User Avatar */}
+                      <div className={`h-12 w-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0 ${
+                        isTopThree
+                          ? "bg-gradient-to-br from-primary to-secondary text-primary-foreground shadow-lg"
+                          : "bg-muted text-muted-foreground"
+                      }`}>
+                        {user.username.split(' ').map(n => n[0]).join('').toUpperCase()}
+                      </div>
+
+                      {/* User Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold truncate ${isTopThree ? "text-lg" : ""}`}>
+                          {user.username}
+                        </p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span>Level {user.level}</span>
+                          <span>•</span>
+                          <span>{user.current_xp} XP</span>
+                        </div>
+                      </div>
+
+                      {/* Total XP Badge */}
+                      <Badge className={`${
+                        isTopThree
+                          ? "bg-primary text-primary-foreground border-0 text-lg px-4 py-1"
+                          : "bg-muted text-muted-foreground border-0"
+                      }`}>
+                        <Trophy className="h-4 w-4 mr-1" />
+                        {user.total_xp.toLocaleString()} XP
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </Card>
+        </TabsContent>
 
         {/* Achievements Tab */}
         <TabsContent value="achievements" className="space-y-4">
