@@ -1,6 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import { BarChart3, TrendingUp, Users, MessageSquare, Calendar } from "lucide-react";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 
@@ -29,79 +27,67 @@ const sentimentData = [
 
 const Analytics = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
-      <div className="bg-card border-b border-border shadow-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Analytics Dashboard</h1>
-              <p className="text-muted-foreground">Insights from your team's feedback</p>
-            </div>
-            <Link to="/">
-              <Button variant="outline">
-                ← Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Analytics Dashboard</h1>
+        <p className="text-muted-foreground text-lg">Insights from your team's feedback</p>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6 shadow-lg border-l-4 border-l-primary animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <Users className="h-8 w-8 text-primary" />
-              <span className="text-sm font-medium text-muted-foreground">Participants</span>
-            </div>
-            <p className="text-3xl font-bold mb-1">1,284</p>
-            <p className="text-sm text-success flex items-center">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +12% from last month
-            </p>
-          </Card>
+      {/* Stats Cards */}
+      <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <Card className="p-6 shadow-lg border-l-4 border-l-primary animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <Users className="h-8 w-8 text-primary" />
+            <span className="text-sm font-medium text-muted-foreground">Participants</span>
+          </div>
+          <p className="text-3xl font-bold mb-1">1,284</p>
+          <p className="text-sm text-success flex items-center">
+            <TrendingUp className="h-4 w-4 mr-1" />
+            +12% from last month
+          </p>
+        </Card>
 
-          <Card className="p-6 shadow-lg border-l-4 border-l-secondary animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            <div className="flex items-center justify-between mb-4">
-              <MessageSquare className="h-8 w-8 text-secondary" />
-              <span className="text-sm font-medium text-muted-foreground">Responses</span>
-            </div>
-            <p className="text-3xl font-bold mb-1">5,147</p>
-            <p className="text-sm text-success flex items-center">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +18% from last month
-            </p>
-          </Card>
+        <Card className="p-6 shadow-lg border-l-4 border-l-secondary animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <div className="flex items-center justify-between mb-4">
+            <MessageSquare className="h-8 w-8 text-secondary" />
+            <span className="text-sm font-medium text-muted-foreground">Responses</span>
+          </div>
+          <p className="text-3xl font-bold mb-1">5,147</p>
+          <p className="text-sm text-success flex items-center">
+            <TrendingUp className="h-4 w-4 mr-1" />
+            +18% from last month
+          </p>
+        </Card>
 
-          <Card className="p-6 shadow-lg border-l-4 border-l-accent animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            <div className="flex items-center justify-between mb-4">
-              <BarChart3 className="h-8 w-8 text-accent" />
-              <span className="text-sm font-medium text-muted-foreground">Avg Rating</span>
-            </div>
-            <p className="text-3xl font-bold mb-1">4.2/5</p>
-            <p className="text-sm text-success flex items-center">
-              <TrendingUp className="h-4 w-4 mr-1" />
-              +0.3 from last month
-            </p>
-          </Card>
+        <Card className="p-6 shadow-lg border-l-4 border-l-accent animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <div className="flex items-center justify-between mb-4">
+            <BarChart3 className="h-8 w-8 text-accent" />
+            <span className="text-sm font-medium text-muted-foreground">Avg Rating</span>
+          </div>
+          <p className="text-3xl font-bold mb-1">4.2/5</p>
+          <p className="text-sm text-success flex items-center">
+            <TrendingUp className="h-4 w-4 mr-1" />
+            +0.3 from last month
+          </p>
+        </Card>
 
-          <Card className="p-6 shadow-lg border-l-4 border-l-success animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <div className="flex items-center justify-between mb-4">
-              <Calendar className="h-8 w-8 text-success" />
-              <span className="text-sm font-medium text-muted-foreground">Active Days</span>
-            </div>
-            <p className="text-3xl font-bold mb-1">28/30</p>
-            <p className="text-sm text-success flex items-center">
-              93% engagement
-            </p>
-          </Card>
-        </div>
+        <Card className="p-6 shadow-lg border-l-4 border-l-success animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <div className="flex items-center justify-between mb-4">
+            <Calendar className="h-8 w-8 text-success" />
+            <span className="text-sm font-medium text-muted-foreground">Active Days</span>
+          </div>
+          <p className="text-3xl font-bold mb-1">28/30</p>
+          <p className="text-sm text-success flex items-center">
+            93% engagement
+          </p>
+        </Card>
+      </div>
 
-        {/* Charts Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Participation Trend */}
-          <Card className="p-6 shadow-lg animate-scale-in">
+      {/* Charts Grid */}
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Participation Trend */}
+        <Card className="p-6 shadow-lg animate-scale-in">
             <h3 className="text-xl font-bold mb-6 flex items-center">
               <TrendingUp className="mr-2 h-5 w-5 text-primary" />
               Participation Trend
@@ -128,10 +114,10 @@ const Analytics = () => {
                 />
               </LineChart>
             </ResponsiveContainer>
-          </Card>
+        </Card>
 
-          {/* Work-Life Balance Distribution */}
-          <Card className="p-6 shadow-lg animate-scale-in" style={{ animationDelay: "0.1s" }}>
+        {/* Work-Life Balance Distribution */}
+        <Card className="p-6 shadow-lg animate-scale-in" style={{ animationDelay: "0.1s" }}>
             <h3 className="text-xl font-bold mb-6 flex items-center">
               <BarChart3 className="mr-2 h-5 w-5 text-secondary" />
               Work-Life Balance
@@ -160,10 +146,10 @@ const Analytics = () => {
                 />
               </PieChart>
             </ResponsiveContainer>
-          </Card>
+        </Card>
 
-          {/* Sentiment Analysis */}
-          <Card className="p-6 shadow-lg lg:col-span-2 animate-scale-in" style={{ animationDelay: "0.2s" }}>
+        {/* Sentiment Analysis */}
+        <Card className="p-6 shadow-lg lg:col-span-2 animate-scale-in" style={{ animationDelay: "0.2s" }}>
             <h3 className="text-xl font-bold mb-6 flex items-center">
               <MessageSquare className="mr-2 h-5 w-5 text-accent" />
               Sentiment by Category
@@ -184,40 +170,39 @@ const Analytics = () => {
                 <Bar dataKey="positive" fill="hsl(var(--success))" radius={[8, 8, 0, 0]} />
                 <Bar dataKey="negative" fill="hsl(var(--destructive))" radius={[8, 8, 0, 0]} />
               </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </div>
-
-        {/* Recent Feedback */}
-        <Card className="p-6 shadow-lg mt-8 animate-fade-in">
-          <h3 className="text-xl font-bold mb-6">Recent Open Feedback</h3>
-          <div className="space-y-4">
-            {[
-              { text: "Love the new team collaboration tools!", sentiment: "positive", time: "2 hours ago" },
-              { text: "Would appreciate more flexible working hours.", sentiment: "neutral", time: "5 hours ago" },
-              { text: "The onboarding process was excellent!", sentiment: "positive", time: "1 day ago" },
-              { text: "Communication between departments could be improved.", sentiment: "neutral", time: "2 days ago" },
-            ].map((feedback, index) => (
-              <div
-                key={index}
-                className="p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
-              >
-                <p className="mb-2">{feedback.text}</p>
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    feedback.sentiment === "positive" 
-                      ? "bg-success/10 text-success" 
-                      : "bg-accent/10 text-accent"
-                  }`}>
-                    {feedback.sentiment}
-                  </span>
-                  <span>{feedback.time}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          </ResponsiveContainer>
         </Card>
       </div>
+
+      {/* Recent Feedback */}
+      <Card className="p-6 shadow-lg mt-8 animate-fade-in">
+        <h3 className="text-xl font-bold mb-6">Recent Open Feedback</h3>
+        <div className="space-y-4">
+          {[
+            { text: "Love the new team collaboration tools!", sentiment: "positive", time: "2 hours ago" },
+            { text: "Would appreciate more flexible working hours.", sentiment: "neutral", time: "5 hours ago" },
+            { text: "The onboarding process was excellent!", sentiment: "positive", time: "1 day ago" },
+            { text: "Communication between departments could be improved.", sentiment: "neutral", time: "2 days ago" },
+          ].map((feedback, index) => (
+            <div
+              key={index}
+              className="p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
+            >
+              <p className="mb-2">{feedback.text}</p>
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  feedback.sentiment === "positive" 
+                    ? "bg-success/10 text-success" 
+                    : "bg-accent/10 text-accent"
+                }`}>
+                  {feedback.sentiment}
+                </span>
+                <span>{feedback.time}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 };
