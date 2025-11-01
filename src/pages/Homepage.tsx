@@ -48,7 +48,7 @@ const Homepage = () => {
   const [openAnswer, setOpenAnswer] = useState("");
   const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
   const [showChallengeSurface, setShowChallengeSurface] = useState(true);
-  const [viewMode, setViewMode] = useState<"list" | "play">("list");
+  const [viewMode, setViewMode] = useState<"list" | "play">("play");
   
   // Ranking game state
   const [rankingStarted, setRankingStarted] = useState(false);
@@ -161,6 +161,12 @@ const Homepage = () => {
       setOpenAnswer("");
       toast.info("Question skipped");
     }
+  };
+
+  const handleExitPlayMode = () => {
+    setCurrentQuestion(null);
+    setViewMode("list");
+    toast.info("Exited Play Mode");
   };
 
   const handleAnswer = async (answer: string) => {
@@ -359,14 +365,24 @@ const Homepage = () => {
                   <h2 className="text-2xl font-bold leading-tight">{currentQuestion.question}</h2>
                 </div>
                 {isPlayMode && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSkipQuestion}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Skip
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSkipQuestion}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Skip
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleExitPlayMode}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Exit
+                    </Button>
+                  </div>
                 )}
               </div>
 
