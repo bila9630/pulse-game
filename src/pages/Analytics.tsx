@@ -193,211 +193,184 @@ const Analytics = () => {
       {/* Questions List */}
       <Accordion type="single" collapsible className="space-y-4">
         {/* Real Questions from Database */}
-        {realQuestions.map((realQuestion, index) => (
-          <AccordionItem 
-            key={realQuestion.id} 
-            value={`question-${realQuestion.id}`}
-            className="border rounded-lg shadow-md bg-card animate-fade-in"
-            style={{ animationDelay: `${index * 0.05}s` }}
-          >
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <div className="flex items-start justify-between w-full pr-4">
-                <div className="flex-1 text-left">
-                  <h3 className="text-lg font-semibold mb-2">{realQuestion.question}</h3>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Badge variant="outline">{realQuestion.type}</Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {realQuestion.totalResponses} responses
-                    </span>
-                    <span className="text-sm text-success flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      {realQuestion.responseRate}% response rate
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </AccordionTrigger>
-            
-            <AccordionContent className="px-6 pb-6">
-              {/* Analytics Content */}
-              <div className="grid lg:grid-cols-2 gap-6 pt-4">
-                {/* Chart Section */}
-                {(realQuestion.type === "Multiple Choice" || realQuestion.type === "Yes/No") && realQuestion.responses.length > 0 && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-4 flex items-center">
-                      <BarChart3 className="mr-2 h-5 w-5 text-primary" />
-                      Response Distribution
-                    </h4>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart>
-                        <Pie
-                          data={realQuestion.responses}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          dataKey="value"
-                        >
-                          {realQuestion.responses.map((entry: any, idx: number) => (
-                            <Cell key={`cell-${idx}`} fill={entry.fill} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: "hsl(var(--card))", 
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px"
-                          }} 
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
-
-                {/* Stats/Details Section */}
-                {(realQuestion.type === "Multiple Choice" || realQuestion.type === "Yes/No") && realQuestion.totalResponses > 0 && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
-                    <div className="space-y-3">
-                      {realQuestion.responses?.map((response: any, idx: number) => (
-                        <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <div 
-                              className="h-3 w-3 rounded-full" 
-                              style={{ backgroundColor: response.fill }}
-                            />
-                            <span className="font-medium">{response.name}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-bold text-lg">{response.value}</span>
-                            <span className="text-muted-foreground text-sm ml-2">
-                              ({realQuestion.totalResponses > 0 ? ((response.value / realQuestion.totalResponses) * 100).toFixed(1) : 0}%)
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+        {realQuestions.map((realQuestion, index) => {
+          const isCategory1 = realQuestion.type === "Multiple Choice" || realQuestion.type === "Yes/No";
+          
+          if (isCategory1) {
+            // Category 1: Expandable accordion without "More Info" button
+            return (
+              <AccordionItem 
+                key={realQuestion.id} 
+                value={`question-${realQuestion.id}`}
+                className="border rounded-lg shadow-md bg-card animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-start justify-between w-full pr-4">
+                    <div className="flex-1 text-left">
+                      <h3 className="text-lg font-semibold mb-2">{realQuestion.question}</h3>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Badge variant="outline">{realQuestion.type}</Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {realQuestion.totalResponses} responses
+                        </span>
+                        <span className="text-sm text-success flex items-center">
+                          <TrendingUp className="h-4 w-4 mr-1" />
+                          {realQuestion.responseRate}% response rate
+                        </span>
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </AccordionTrigger>
+                
+                <AccordionContent className="px-6 pb-6">
+                  <div className="grid lg:grid-cols-2 gap-6 pt-4">
+                    {realQuestion.responses.length > 0 && (
+                      <div>
+                        <h4 className="text-lg font-semibold mb-4 flex items-center">
+                          <BarChart3 className="mr-2 h-5 w-5 text-primary" />
+                          Response Distribution
+                        </h4>
+                        <ResponsiveContainer width="100%" height={250}>
+                          <PieChart>
+                            <Pie
+                              data={realQuestion.responses}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                              outerRadius={80}
+                              dataKey="value"
+                            >
+                              {realQuestion.responses.map((entry: any, idx: number) => (
+                                <Cell key={`cell-${idx}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: "hsl(var(--card))", 
+                                border: "1px solid hsl(var(--border))",
+                                borderRadius: "8px"
+                              }} 
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
 
-              {/* More Info Button */}
-              <div className="mt-6 pt-6 border-t">
-                <Button 
-                  onClick={() => navigate(`/analytics/${realQuestion.id}`)}
-                  className="w-full"
-                >
-                  More Info
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
+                    {realQuestion.totalResponses > 0 && (
+                      <div>
+                        <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
+                        <div className="space-y-3">
+                          {realQuestion.responses?.map((response: any, idx: number) => (
+                            <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <div 
+                                  className="h-3 w-3 rounded-full" 
+                                  style={{ backgroundColor: response.fill }}
+                                />
+                                <span className="font-medium">{response.name}</span>
+                              </div>
+                              <div className="text-right">
+                                <span className="font-bold text-lg">{response.value}</span>
+                                <span className="text-muted-foreground text-sm ml-2">
+                                  ({realQuestion.totalResponses > 0 ? ((response.value / realQuestion.totalResponses) * 100).toFixed(1) : 0}%)
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          } else {
+            // Category 2: Clickable card that navigates to detail page
+            return (
+              <Card
+                key={realQuestion.id}
+                className="border rounded-lg shadow-md bg-card animate-fade-in cursor-pointer hover:shadow-lg transition-shadow"
+                style={{ animationDelay: `${index * 0.05}s` }}
+                onClick={() => navigate(`/analytics/${realQuestion.id}`)}
+              >
+                <div className="px-6 py-4">
+                  <div className="flex items-start justify-between w-full">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2">{realQuestion.question}</h3>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Badge variant="outline">{realQuestion.type}</Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {realQuestion.totalResponses} responses
+                        </span>
+                        <span className="text-sm text-success flex items-center">
+                          <TrendingUp className="h-4 w-4 mr-1" />
+                          {realQuestion.responseRate}% response rate
+                        </span>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground ml-4" />
+                  </div>
+                </div>
+              </Card>
+            );
+          }
+        })}
         
         {/* Mock Questions */}
-        {questionsData.map((question, index) => (
-          <AccordionItem 
-            key={question.id} 
-            value={`question-${question.id}`}
-            className="border rounded-lg shadow-md bg-card animate-fade-in"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <AccordionTrigger className="px-6 py-4 hover:no-underline">
-              <div className="flex items-start justify-between w-full pr-4">
-                <div className="flex-1 text-left">
-                  <h3 className="text-lg font-semibold mb-2">{question.question}</h3>
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Badge variant="outline">{question.type}</Badge>
-                    <span className="text-sm text-muted-foreground">
-                      {question.totalResponses} responses
-                    </span>
-                    <span className="text-sm text-success flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      {question.responseRate}% response rate
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </AccordionTrigger>
-            
-            <AccordionContent className="px-6 pb-6">
-              {/* Analytics Content */}
-              <div className="grid lg:grid-cols-2 gap-6 pt-4">
-                {/* Chart Section */}
-                {(question.type === "Multiple Choice" || question.type === "Yes/No") && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-4 flex items-center">
-                      <BarChart3 className="mr-2 h-5 w-5 text-primary" />
-                      Response Distribution
-                    </h4>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart>
-                        <Pie
-                          data={question.responses}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          dataKey="value"
-                        >
-                          {question.responses.map((entry, idx) => (
-                            <Cell key={`cell-${idx}`} fill={entry.fill} />
-                          ))}
-                        </Pie>
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: "hsl(var(--card))", 
-                            border: "1px solid hsl(var(--border))",
-                            borderRadius: "8px"
-                          }} 
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
-
-                {/* Stats/Details Section - Only for Multiple Choice and Yes/No */}
-                {(question.type === "Multiple Choice" || question.type === "Yes/No") && (
-                  <div>
-                    <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
-                    <div className="space-y-3">
-                      {question.responses?.map((response, idx) => (
-                        <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <div 
-                              className="h-3 w-3 rounded-full" 
-                              style={{ backgroundColor: response.fill }}
-                            />
-                            <span className="font-medium">{response.name}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="font-bold text-lg">{response.value}</span>
-                            <span className="text-muted-foreground text-sm ml-2">
-                              ({((response.value / question.totalResponses) * 100).toFixed(1)}%)
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+        {questionsData.map((question, index) => {
+          const isCategory1 = question.type === "Multiple Choice" || question.type === "Yes/No";
+          
+          if (isCategory1) {
+            // Category 1: Expandable accordion without "More Info" button
+            return (
+              <AccordionItem 
+                key={question.id} 
+                value={`question-${question.id}`}
+                className="border rounded-lg shadow-md bg-card animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-start justify-between w-full pr-4">
+                    <div className="flex-1 text-left">
+                      <h3 className="text-lg font-semibold mb-2">{question.question}</h3>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Badge variant="outline">{question.type}</Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {question.totalResponses} responses
+                        </span>
+                        <span className="text-sm text-success flex items-center">
+                          <TrendingUp className="h-4 w-4 mr-1" />
+                          {question.responseRate}% response rate
+                        </span>
+                      </div>
                     </div>
                   </div>
-                )}
-
-                {/* Ranking Results */}
-                {question.type === "Ranking" && question.finalRanking && (
-                  <>
+                </AccordionTrigger>
+                
+                <AccordionContent className="px-6 pb-6">
+                  <div className="grid lg:grid-cols-2 gap-6 pt-4">
                     <div>
                       <h4 className="text-lg font-semibold mb-4 flex items-center">
-                        <Trophy className="mr-2 h-5 w-5 text-primary" />
-                        Overall Ranking
+                        <BarChart3 className="mr-2 h-5 w-5 text-primary" />
+                        Response Distribution
                       </h4>
                       <ResponsiveContainer width="100%" height={250}>
-                        <BarChart data={question.finalRanking} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                          <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
-                          <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" width={100} />
+                        <PieChart>
+                          <Pie
+                            data={question.responses}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            dataKey="value"
+                          >
+                            {question.responses.map((entry, idx) => (
+                              <Cell key={`cell-${idx}`} fill={entry.fill} />
+                            ))}
+                          </Pie>
                           <Tooltip 
                             contentStyle={{ 
                               backgroundColor: "hsl(var(--card))", 
@@ -405,58 +378,67 @@ const Analytics = () => {
                               borderRadius: "8px"
                             }} 
                           />
-                          <Bar dataKey="wins" radius={[0, 8, 8, 0]}>
-                            {question.finalRanking.map((entry, idx) => (
-                              <Cell key={`cell-${idx}`} fill={entry.fill} />
-                            ))}
-                          </Bar>
-                        </BarChart>
+                        </PieChart>
                       </ResponsiveContainer>
                     </div>
 
                     <div>
-                      <h4 className="text-lg font-semibold mb-4">Top Preferences</h4>
+                      <h4 className="text-lg font-semibold mb-4">Response Breakdown</h4>
                       <div className="space-y-3">
-                        {question.finalRanking.slice(0, 3).map((item, idx) => (
+                        {question.responses?.map((response, idx) => (
                           <div key={idx} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-                                {idx + 1}
-                              </div>
                               <div 
                                 className="h-3 w-3 rounded-full" 
-                                style={{ backgroundColor: item.fill }}
+                                style={{ backgroundColor: response.fill }}
                               />
-                              <span className="font-medium">{item.name}</span>
+                              <span className="font-medium">{response.name}</span>
                             </div>
                             <div className="text-right">
-                              <span className="font-bold text-lg">{item.wins}</span>
+                              <span className="font-bold text-lg">{response.value}</span>
                               <span className="text-muted-foreground text-sm ml-2">
-                                ({((item.wins / question.totalResponses) * 100).toFixed(1)}%)
+                                ({((response.value / question.totalResponses) * 100).toFixed(1)}%)
                               </span>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
-                  </>
-                )}
-
-              </div>
-
-              {/* More Info Button */}
-              <div className="mt-6 pt-6 border-t">
-                <Button 
-                  onClick={() => navigate(`/analytics/${question.id}`)}
-                  className="w-full"
-                >
-                  More Info
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          } else {
+            // Category 2: Clickable card that navigates to detail page
+            return (
+              <Card
+                key={question.id}
+                className="border rounded-lg shadow-md bg-card animate-fade-in cursor-pointer hover:shadow-lg transition-shadow"
+                style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => navigate(`/analytics/${question.id}`)}
+              >
+                <div className="px-6 py-4">
+                  <div className="flex items-start justify-between w-full">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2">{question.question}</h3>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Badge variant="outline">{question.type}</Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {question.totalResponses} responses
+                        </span>
+                        <span className="text-sm text-success flex items-center">
+                          <TrendingUp className="h-4 w-4 mr-1" />
+                          {question.responseRate}% response rate
+                        </span>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground ml-4" />
+                  </div>
+                </div>
+              </Card>
+            );
+          }
+        })}
       </Accordion>
     </div>
   );
