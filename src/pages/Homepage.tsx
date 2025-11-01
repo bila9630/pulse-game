@@ -65,6 +65,7 @@ const Homepage = () => {
   const evaluationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const undoTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [undoAvailable, setUndoAvailable] = useState(false);
+  const [undoTimeLeft, setUndoTimeLeft] = useState(5);
   const evaluationRef = useRef<HTMLDivElement>(null);
   
   // Ranking game state
@@ -181,7 +182,7 @@ const Homepage = () => {
   useEffect(() => {
     return () => {
       if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+      if (undoTimerRef.current) clearInterval(undoTimerRef.current);
     };
   }, []);
 
@@ -203,7 +204,7 @@ const Homepage = () => {
     if (currentQuestion) {
       // Clear any existing timers
       if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+      if (undoTimerRef.current) clearInterval(undoTimerRef.current);
       
       // Reset state
       setShowEvaluation(false);
@@ -226,7 +227,7 @@ const Homepage = () => {
     
     // Clear timers
     if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    if (undoTimerRef.current) clearInterval(undoTimerRef.current);
     
     // Remove from answered questions
     setAnsweredQuestions(prev => prev.filter(id => id !== evaluationResult.questionId));
@@ -256,7 +257,7 @@ const Homepage = () => {
   const handleCancelNext = () => {
     // Clear timers
     if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    if (undoTimerRef.current) clearInterval(undoTimerRef.current);
     
     // Mark question as answered and close
     if (currentQuestion) {
@@ -277,7 +278,7 @@ const Homepage = () => {
     
     // Clear timers
     if (evaluationTimerRef.current) clearTimeout(evaluationTimerRef.current);
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    if (undoTimerRef.current) clearInterval(undoTimerRef.current);
     
     // For open-ended questions, show word cloud results before moving to next question
     if (currentQuestion.type === 'open-ended') {
@@ -417,12 +418,21 @@ const Homepage = () => {
       });
       setShowEvaluation(true);
       setUndoAvailable(true);
+      setUndoTimeLeft(5);
       
-      // Start undo timer
-      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-      undoTimerRef.current = setTimeout(() => {
-        setUndoAvailable(false);
-      }, 5000);
+      // Start undo countdown timer
+      if (undoTimerRef.current) clearInterval(undoTimerRef.current);
+      
+      let timeLeft = 5;
+      undoTimerRef.current = setInterval(() => {
+        timeLeft -= 1;
+        setUndoTimeLeft(timeLeft);
+        
+        if (timeLeft <= 0) {
+          setUndoAvailable(false);
+          if (undoTimerRef.current) clearInterval(undoTimerRef.current);
+        }
+      }, 1000);
       
       // For multiple choice and yes/no, fetch and store vote distribution for later
       if (currentQuestion.type === 'multiple-choice' || currentQuestion.type === 'yes-no') {
@@ -690,7 +700,7 @@ const Homepage = () => {
                       onClick={handleUndo}
                       className="gap-2"
                     >
-                      <span className="text-sm">↩️</span> Undo (5s)
+                      <span className="text-sm">↩️</span> Undo ({undoTimeLeft}s)
                     </Button>
                   )}
                   <Button
@@ -896,7 +906,7 @@ const Homepage = () => {
                     onClick={handleUndo}
                     className="gap-2"
                   >
-                    <span className="text-sm">↩️</span> Undo (5s)
+                    <span className="text-sm">↩️</span> Undo ({undoTimeLeft}s)
                   </Button>
                 )}
                 <Button
